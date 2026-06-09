@@ -102,7 +102,6 @@ export default function HomeScreen() {
 }
 
 function WardCard({ ward }: { ward: DocumentData }) {
-  const router = useRouter();
   const [deviceData, setDeviceData] = useState<DocumentData | null>(null);
   const [mapVisible, setMapVisible] = useState(false);
 
