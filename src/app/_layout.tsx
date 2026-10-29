@@ -4,6 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import { auth } from '../services/firebase';
+import { LocalizationProvider } from '@/localization';
 
 function AuthGuard() {
   const [user, setUser] = useState<any>(undefined);
@@ -23,7 +24,7 @@ function AuthGuard() {
     } else if (user && inAuthGroup) {
       router.replace("/home");
     }
-  }, [user, segments]);
+  }, [user, segments, router]);
 
   return null;
 }
@@ -31,7 +32,7 @@ function AuthGuard() {
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <LocalizationProvider><ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <AnimatedSplashOverlay />
       <AuthGuard />
       <Stack screenOptions={{ headerShown: false }}>
@@ -41,7 +42,9 @@ export default function TabLayout() {
         <Stack.Screen name="ward" />
         <Stack.Screen name="map" />
         <Stack.Screen name="history" />
+        <Stack.Screen name="health" />
+        <Stack.Screen name="settings" />
       </Stack>
-    </ThemeProvider>
+    </ThemeProvider></LocalizationProvider>
   );
 }
