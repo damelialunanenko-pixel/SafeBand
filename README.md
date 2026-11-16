@@ -82,3 +82,9 @@ eas env:create --name GOOGLE_MAPS_API_KEY --value AIza... --visibility secret
 ```
 
 After changing the key, rebuild the native app (`npx expo run:android`); a JS reload is not enough.
+
+## Expo Go vs development build
+
+- **Expo Go** — everything except SMS: `npx expo start`, scan the QR code with Expo Go (SDK 58).
+- **SMS reading from the bracelet** — only in your own Android build, because it needs a custom native
+  module that Expo Go does not contain: `npm run android:dev` (= `npx expo run:android`) or an EAS build.
