@@ -80,7 +80,7 @@ export default function LocationScreen() {
 
   const assessment = assessLocation(location, places, ward.safeRoutes);
   const chip = locationChip(assessment, t);
-  const accuracy = Number(device?.location?.accuracy);
+  const accuracy = Number(device?.location?.accuracyM ?? device?.location?.accuracy);
   const source = device?.location?.source;
   const placeColors = [colors.primary, colors.success, colors.lavender, colors.cyan];
 

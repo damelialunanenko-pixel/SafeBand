@@ -16,6 +16,7 @@ import { useLiveRefresh } from '@/hooks/use-refresh';
 import { useWardEvents } from '@/hooks/use-ward-events';
 import { useLocalization } from '@/localization';
 import { assessLocation, healthStatus } from '@/services/care-logic';
+import { useBraceletSmsBridge } from '@/services/bracelet-sms';
 import { setSos } from '@/services/care-repository';
 import { useSession } from '@/services/session';
 import { makeStyles, useAppTheme } from '@/theme';
@@ -30,6 +31,8 @@ export default function Dashboard() {
   const { events, loading: eventsLoading, error: eventsError } = useWardEvents(ward, 4);
   const { refreshing, onRefresh } = useLiveRefresh();
   useCareAlerts(ward, device);
+  // Android dev/EAS builds only: bracelet location SMS → devices/{braceletId}. No-op in Expo Go / iOS.
+  useBraceletSmsBridge(ward);
 
   const guardianName = profile?.firstName?.trim();
 

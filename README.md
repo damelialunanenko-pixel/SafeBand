@@ -88,3 +88,18 @@ After changing the key, rebuild the native app (`npx expo run:android`); a JS re
 - **Expo Go** — everything except SMS: `npx expo start`, scan the QR code with Expo Go (SDK 58).
 - **SMS reading from the bracelet** — only in your own Android build, because it needs a custom native
   module that Expo Go does not contain: `npm run android:dev` (= `npx expo run:android`) or an EAS build.
+
+## Bracelet SMS (Android only)
+
+The bracelet can send its location as a plain SMS (format in [DEVICE_SPEC.md](DEVICE_SPEC.md) §11).
+The local native module `modules/safeband-sms` (Kotlin, autolinked from `./modules`) receives `SMS_RECEIVED`
+and reads the inbox; `src/services/bracelet-sms.ts` keeps only messages from `wards/{id}.braceletPhone`
+and writes them to `devices/{braceletId}`.
+
+- Works **only** in a build with native code: `npx expo run:android` (or `npm run android:dev`) or an EAS build.
+  In Expo Go and on iOS the module is absent (`requireOptionalNativeModule` returns `null`); the app keeps
+  working and Settings explains why SMS is unavailable.
+- Enable: Settings → "Bracelet SMS" → enter the bracelet SIM number → "Allow reading SMS".
+- Test on an emulator: Extended controls → Phone → send an SMS from the saved number with the text
+  `latitude: 43.238\nlongitude: 76.900\nsource: cell\naccuracy_m: 150`.
+- `RECEIVE_SMS` / `READ_SMS` are in `app.json`; Google Play allows them only with an approved permissions declaration.

@@ -1,6 +1,7 @@
 import { useRouter, type Href } from 'expo-router';
 import { Alert, View } from 'react-native';
 import { DeleteAccountCard } from '@/components/delete-account';
+import { SmsSettingsCard } from '@/components/sms-settings-card';
 import {
   Appear, AppText, Button, Card, GradientHeader, Icon, IconCircle, ListItem, PressableScale, ScreenScroll, selectionHaptic,
   TopBar, useToast,
@@ -78,6 +79,10 @@ export default function SettingsScreen() {
       </Appear>
 
       <Appear index={2}>
+        <SmsSettingsCard />
+      </Appear>
+
+      <Appear index={3}>
         <Card style={s.card}>
           <View style={s.cardHead}>
             <IconCircle name="flask" tone="cyan" />
@@ -88,7 +93,7 @@ export default function SettingsScreen() {
         </Card>
       </Appear>
 
-      <Appear index={3}>
+      <Appear index={4}>
         <Card style={s.card}>
           <DeleteAccountCard />
         </Card>

@@ -41,7 +41,7 @@ export type Ward = {
   addressSameAsGuardian?: boolean;
   hospital?: Hospital;
   braceletId?: string;
-  /** Bracelet SIM number, used by the SMS fallback. */
+  /** Phone number of the SIM card in the bracelet — used to recognise its SMS (Android). */
   braceletPhone?: string;
   safePlaces?: SafePlace[];
   safeRoutes?: SafeRoute[];
@@ -68,9 +68,15 @@ export type GuardianProfile = {
   fcmToken?: string;
 };
 
+export type LocationSource = 'cell' | 'gps' | 'wifi' | string;
+export type CellTower = { mcc: number; mnc: number; lac: number; cellId: number; rssi: number };
+
 export type DeviceData = {
-  /** `accuracy` (metres) and `source` are optional: shown on the map only when the device reports them. */
-  location?: Coordinates & { updatedAt?: unknown; address?: string; accuracy?: number; source?: 'gps' | 'cell' | string };
+  /**
+   * `accuracyM` (metres, written by the SMS bridge) / legacy `accuracy` and `source` are optional:
+   * shown on the map only when the device reports them.
+   */
+  location?: Coordinates & { updatedAt?: unknown; address?: string; accuracyM?: number; accuracy?: number; source?: LocationSource };
   braceletLocation?: Coordinates & { updatedAt?: unknown };
   connected?: boolean;
   worn?: boolean;
@@ -81,6 +87,9 @@ export type DeviceData = {
   fall_detected?: boolean;
   sos?: { active?: boolean; updatedAt?: unknown };
   sos_pressed?: boolean;
+  /** Cell towers reported in the last location SMS: MCC, MNC, LAC, CellID, RSSI (dBm). */
+  cells?: CellTower[];
+  lastSms?: { receivedAt?: unknown; via?: string; extra?: Record<string, string> };
 };
 
 export type HealthThresholds = { minHeartRate: number; maxHeartRate: number; minSpo2: number };
