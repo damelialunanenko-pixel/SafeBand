@@ -136,6 +136,26 @@ Device Information (standard):
   "location": { "lat": 51.1694, "lng": 71.4491, "updatedAt": "2026-08-24T11:59:00Z" }
 }
 
+## 11. SMS с координатами (Android, без сервера)
+Браслет может присылать координаты обычным SMS на телефон опекуна. Формат (строки `ключ: значение`, порядок любой):
+
+```
+latitude: 43.23822021
+longitude: 76.90017700
+source: cell            # cell | gps | wifi
+accuracy_m: 150         # точность, метры
+cell0: 401,1,2270,1643,-70   # MCC,MNC,LAC,CellID,RSSI(dBm); cell0..cellN
+```
+
+- Разбор: `src/services/sms-parser.ts` (`parseBraceletSms`). Неизвестные ключи сохраняются в `devices/{id}.lastSms.extra`.
+- Приём: нативный модуль `modules/safeband-sms` (Kotlin) + `src/services/bracelet-sms.ts`.
+  SMS принимаются только с номера `wards/{id}.braceletPhone` (сравниваются последние 10 цифр).
+- Запись в Firestore `devices/{braceletId}`: `location` и `braceletLocation` = `{lat, lng, accuracyM, source, updatedAt}`, `cells[]`, `lastSyncAt`, `lastSms`.
+- Включается в приложении: Настройки → «SMS от браслета» → ввести номер SIM браслета → «Разрешить чтение SMS».
+- Ограничения: только Android; нужна сборка `npx expo run:android` или EAS (в Expo Go модуля нет);
+  SMS ловятся, пока приложение запущено, а пропущенные читаются из входящих при следующем открытии.
+  iOS не даёт приложениям читать SMS. Google Play пропускает приложения с правами SMS только по особому разрешению.
+
 ---
 
 Если нужно, могу:
