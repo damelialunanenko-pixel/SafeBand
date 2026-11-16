@@ -54,3 +54,31 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Google Maps API key (Android builds)
+
+The map screen (`src/app/map.tsx`) uses `react-native-maps`.
+
+- **Expo Go** works without a key (Android uses Expo Go's built-in Google Maps key; iOS uses Apple Maps).
+- **Your own Android build** (`npx expo run:android`, EAS Build) needs your own key, otherwise the map is blank/grey.
+
+How to get a key:
+
+1. Open [Google Cloud Console](https://console.cloud.google.com/) and create or select a project.
+2. **APIs & Services → Library** → enable **Maps SDK for Android**.
+3. **APIs & Services → Credentials → Create credentials → API key**.
+4. Restrict the key: *Application restrictions* → **Android apps**, add the package name and the SHA-1
+   of your signing certificate (debug: `cd android && ./gradlew signingReport`; EAS: `eas credentials`).
+   *API restrictions* → **Maps SDK for Android**.
+
+How to provide it (the key is never committed — `app.config.ts` reads it from the environment):
+
+```bash
+# local builds: create .env.local (already git-ignored)
+echo GOOGLE_MAPS_API_KEY=AIza... > .env.local
+
+# EAS Build: store it as an EAS environment variable
+eas env:create --name GOOGLE_MAPS_API_KEY --value AIza... --visibility secret
+```
+
+After changing the key, rebuild the native app (`npx expo run:android`); a JS reload is not enough.
