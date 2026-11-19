@@ -12,6 +12,18 @@ export const setSos = async (ward: Ward, active: boolean) => {
 };
 export const saveWard = (id: string, data: Partial<Ward>) => updateDoc(doc(db, 'wards', id), data);
 
+/**
+ * Links a bracelet to a ward in one batch: wards/{id}.braceletId and devices/{braceletId}.wardId.
+ * Firestore rules let only the ward's caregiver do this, and refuse a bracelet already linked
+ * to someone else's ward.
+ */
+export async function bindBracelet(wardId: string, braceletId: string) {
+  const batch = writeBatch(db);
+  batch.update(doc(db, 'wards', wardId), { braceletId });
+  batch.set(doc(db, 'devices', braceletId), { wardId }, { merge: true });
+  await batch.commit();
+}
+
 /** Writes only deterministic `care-band-demo-*` documents for the signed-in caregiver. */
 export async function seedDemoData() {
   const guardianId = auth.currentUser?.uid;
