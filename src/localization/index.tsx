@@ -1,11 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { formsDictionaries } from './forms';
 
 export type Language = 'ru' | 'en' | 'kk';
 type Values = Record<string, string | number>;
 type Dictionary = Record<string, string>;
 
-const dictionaries: Record<Language, Dictionary> = {
+const baseDictionaries: Record<Language, Dictionary> = {
   en: {
     careBand:'Care Band', monitoring:'Monitoring {{name}}', settings:'Settings', language:'Language', russian:'Russian', english:'English', kazakh:'Kazakh',
     addPerson:'Add person', addPersonPrompt:'Add a person and their bracelet to begin monitoring.', location:'Location', health:'Health', braceletStatus:'Bracelet status', recentEvents:'Recent events',
@@ -37,6 +38,12 @@ const dictionaries: Record<Language, Dictionary> = {
     name:'Аты', diagnosis:'Диагноз', braceletId:'Білезік ID', addPersonTitle:'Қамқорлықтағы адамды қосу', requiredPerson:'Атын және білезік ID енгізіңіз.', personAdded:'Адам қосылды.', saveError:'Сақтау мүмкін болмады', email:'Email', password:'Құпиясөз', signIn:'Кіру', register:'Тіркелу', signInError:'Кіру қатесі', registrationError:'Тіркелу қатесі', requiredCredentials:'Email мен құпиясөзді енгізіңіз.', passwordShort:'Құпиясөз кемінде 6 таңбадан тұруы керек.', welcome:'Қош келдіңіз', signInSubtitle:'Кіріңіз немесе аккаунт жасаңыз',
     seedDemo:'Ойдан шығарылған демо-деректерді қосу', seedDemoDescription:'Тіркелгіңізге бір ойдан шығарылған адамды және Firebase деректерін жасайды не жаңартады.', seedDemoConfirm:'Демо-деректер қосылсын ба?', seedDemoWarning:'Care Band демо-ID бар құжаттар жаңартылады. Басқа деректер өзгермейді.', seedDemoSuccess:'Демо-деректер дайын.', seedDemoError:'Демо-деректер қосылмады.', loading:'Жүктелуде…', noSafePlacesShort:'Сақталған қауіпсіз орындар жоқ', atPlace:'Орнында: {{name}}', expectedAt:'Күтілетін орын: {{name}}', outsideSafeArea:'Қауіпсіз аймақтан тыс', onSafeRoute:'Қауіпсіз бағытта', outsideSafeRoute:'Қауіпсіз бағыттан тыс', locationUnavailable:'Орналасу қолжетімсіз', normal:'Қалыпты',
   },
+};
+
+const dictionaries: Record<Language, Dictionary> = {
+  en: { ...baseDictionaries.en, ...formsDictionaries.en },
+  ru: { ...baseDictionaries.ru, ...formsDictionaries.ru },
+  kk: { ...baseDictionaries.kk, ...formsDictionaries.kk },
 };
 
 type Localization = { language: Language; setLanguage: (language: Language) => Promise<void>; t: (key: keyof typeof dictionaries.en, values?: Values) => string };

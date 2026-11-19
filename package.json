@@ -5,6 +5,7 @@
   "dependencies": {
     "@expo/ui": "~58.0.28",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@types/jest": "30.0.0",
     "expo": "^58.0.0",
     "expo-constants": "~58.0.16",
     "expo-device": "~58.0.5",
@@ -20,6 +21,9 @@
     "expo-system-ui": "~58.0.7",
     "expo-web-browser": "~58.0.8",
     "firebase": "^12.14.0",
+    "jest": "~30.5.2",
+    "jest-expo": "~58.0.15",
+    "libphonenumber-js": "^1.13.17",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-native": "0.88.1",
@@ -46,7 +50,15 @@
     "android:dev": "expo run:android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "test": "jest"
   },
-  "private": true
+  "private": true,
+  "jest": {
+    "preset": "jest-expo",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/functions/"
+    ]
+  }
 }

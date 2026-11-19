@@ -1,6 +1,7 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getApp, getApps, initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
+import { createAuth } from "./firebase-auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAgvZPW0bK-AUoNHo2fpPyaI-b7P_kuxIw",
@@ -11,7 +12,10 @@ const firebaseConfig = {
   appId: "1:291592062626:web:46ec1a8d41006cc4f2f9fb"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-export const auth = getAuth(app);
+/** Native: initializeAuth + AsyncStorage persistence; web: getAuth (see firebase-auth*.ts). */
+export const auth = createAuth(app);
 export const db = getFirestore(app);
+/** Callable Cloud Functions (functions/src/index.ts), default region us-central1. */
+export const functions = getFunctions(app);

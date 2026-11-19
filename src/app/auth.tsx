@@ -1,2 +1,57 @@
-import { useRouter } from 'expo-router'; import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'; import { useState } from 'react'; import { ActivityIndicator,Alert,StyleSheet,Text,TextInput,TouchableOpacity,View } from 'react-native'; import { useLocalization } from '@/localization'; import { auth } from '@/services/firebase';
-export default function AuthScreen(){const{t}=useLocalization();const[email,setEmail]=useState('');const[password,setPassword]=useState('');const[loading,setLoading]=useState(false);const router=useRouter();const submit=async(register=false)=>{if(!email||!password)return Alert.alert(t('careBand'),t('requiredCredentials'));if(register&&password.length<6)return Alert.alert(t('careBand'),t('passwordShort'));setLoading(true);try{if(register)await createUserWithEmailAndPassword(auth,email,password);else await signInWithEmailAndPassword(auth,email,password);router.replace('/home')}catch(e:any){Alert.alert(t(register?'registrationError':'signInError'),e.message)}finally{setLoading(false)}};return <View style={s.page}><Text style={s.title}>{t('careBand')}</Text><Text style={s.subtitle}>{t('signInSubtitle')}</Text><Text style={s.label}>{t('email')}</Text><TextInput style={s.input} value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" placeholder="example@mail.com"/><Text style={s.label}>{t('password')}</Text><TextInput style={s.input} value={password} onChangeText={setPassword} secureTextEntry placeholder={t('password')}/><TouchableOpacity disabled={loading} style={s.primary} onPress={()=>submit()}>{loading?<ActivityIndicator color="#fff"/>:<Text style={s.white}>{t('signIn')}</Text>}</TouchableOpacity><TouchableOpacity disabled={loading} style={s.secondary} onPress={()=>submit(true)}><Text style={s.white}>{t('register')}</Text></TouchableOpacity></View>};const s=StyleSheet.create({page:{flex:1,justifyContent:'center',padding:24,backgroundColor:'#f4f9ff'},title:{fontSize:32,color:'#102a43',fontWeight:'800',marginBottom:8},subtitle:{fontSize:16,color:'#5c7085',marginBottom:35},label:{color:'#3974a5',marginBottom:6,fontWeight:'700'},input:{backgroundColor:'#fff',color:'#102a43',padding:14,marginBottom:16,borderRadius:10,fontSize:16},primary:{backgroundColor:'#1976d2',padding:16,borderRadius:10,marginBottom:12,alignItems:'center'},secondary:{backgroundColor:'#3974a5',padding:16,borderRadius:10,alignItems:'center'},white:{color:'#fff',fontWeight:'800'}});
+import { useRouter, type Href } from 'expo-router';
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import { useState } from 'react';
+import { Alert, Text } from 'react-native';
+import { Button, Field, PasswordField, Screen, Subtitle, Title, s as form, useTouched } from '@/components/form';
+import { useLocalization } from '@/localization';
+import { errorKey } from '@/services/auth-errors';
+import { auth } from '@/services/firebase';
+import { normalizeEmail, validateEmail } from '@/services/validation';
+
+export default function SignInScreen() {
+  const { t } = useLocalization();
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { touch, shown } = useTouched<'email' | 'password'>();
+
+  const emailError = validateEmail(email);
+  const passwordError = password ? null : 'errRequired';
+  const valid = !emailError && !passwordError;
+
+  // Navigation after success is done by AuthGuard (verify email → security check → home).
+  const submit = async () => {
+    setLoading(true); setError(null);
+    try { await signInWithEmailAndPassword(auth, normalizeEmail(email), password); }
+    catch (e) { setError(errorKey(e)); }
+    finally { setLoading(false); }
+  };
+
+  const forgot = async () => {
+    touch('email');
+    if (emailError) return Alert.alert(t('resetTitle'), t('resetEnterEmail'));
+    try { await sendPasswordResetEmail(auth, normalizeEmail(email)); }
+    catch (e) {
+      // Same answer whether or not the account exists; only connectivity problems are reported.
+      if (errorKey(e) === 'errNetwork' || errorKey(e) === 'errTooManyRequests') return Alert.alert(t('resetTitle'), t(errorKey(e)));
+    }
+    Alert.alert(t('resetTitle'), t('resetSent'));
+  };
+
+  return (
+    <Screen>
+      <Title>{t('signInTitle')}</Title>
+      <Subtitle>{t('careBand')}</Subtitle>
+      <Field label={t('email')} value={email} onChangeText={setEmail} onTouched={() => touch('email')} error={shown('email', emailError)}
+        placeholder={t('emailPlaceholder')} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} autoComplete="email" textContentType="emailAddress" />
+      <PasswordField label={t('password')} value={password} onChangeText={setPassword} onTouched={() => touch('password')} error={shown('password', passwordError)}
+        placeholder={t('passwordPlaceholder')} autoComplete="current-password" textContentType="password" onSubmitEditing={() => valid && void submit()} />
+      {error ? <Text style={form.error}>{t(error)}</Text> : null}
+      <Button title={t('signIn')} onPress={() => void submit()} disabled={!valid} loading={loading} />
+      <Button variant="link" title={t('forgotPassword')} onPress={() => void forgot()} />
+      <Button variant="link" title={t('noAccountYet')} onPress={() => router.replace('/register' as Href)} />
+    </Screen>
+  );
+}
