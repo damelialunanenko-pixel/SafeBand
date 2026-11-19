@@ -4,6 +4,7 @@ import { onDocumentUpdated } from "firebase-functions/v2/firestore";
 admin.initializeApp();
 
 export { setSecurityAnswers, verifySecurityAnswers } from "./security.js";
+export { deleteAccountData } from "./account.js";
 
 export const onDeviceUpdate = onDocumentUpdated(
   "devices/{braceletId}",
