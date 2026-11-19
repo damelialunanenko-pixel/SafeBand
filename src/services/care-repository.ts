@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, onSnapshot, serverTimestamp, setDoc, updateDoc, writeBatch, Timestamp } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, serverTimestamp, setDoc, updateDoc, writeBatch, Timestamp } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import type { CareEvent, Ward } from '@/types/care';
 
@@ -24,18 +24,22 @@ export async function bindBracelet(wardId: string, braceletId: string) {
   await batch.commit();
 }
 
-/** Writes only deterministic `care-band-demo-*` documents for the signed-in caregiver. */
+/** Writes only deterministic `care-band-demo-*-{uid}` documents for the signed-in caregiver. */
 export async function seedDemoData() {
   const guardianId = auth.currentUser?.uid;
   if (!guardianId) throw new Error('A signed-in caregiver is required.');
   const now = Timestamp.now(); const ago = (minutes: number) => Timestamp.fromMillis(now.toMillis() - minutes * 60_000);
-  const wardId = 'care-band-demo-ward'; const braceletId = 'care-band-demo-device'; const batch = writeBatch(db);
+  // IDs are per caregiver: with Firestore rules a shared demo ID would belong to whoever seeded it first.
+  const suffix = guardianId;
+  const wardId = `care-band-demo-ward-${suffix}`; const braceletId = `care-band-demo-device-${suffix}`; const batch = writeBatch(db);
+  // Remove the old shared demo ward of this caregiver, if any (its device is not linked under the rules).
+  await deleteDoc(doc(db, 'wards', 'care-band-demo-ward')).catch(() => undefined);
   batch.set(doc(db, 'wards', wardId), { guardianId, name: 'Aruzhan Demo', braceletId, diagnosis: 'Fictional prototype profile', healthThresholds: { minHeartRate: 50, maxHeartRate: 120, minSpo2: 92 }, safePlaces: [
     { id: 'demo-home', name: 'Demo Home', address: '12 Fictional Avenue', location: { lat: 51.1694, lng: 71.4491 }, radius: 50 },
     { id: 'demo-school', name: 'Demo School', address: '8 Sample Street', location: { lat: 51.174, lng: 71.455 }, radius: 75 },
   ], safeRoutes: [{ id: 'demo-route', name: 'Demo Home to School', points: [{ lat: 51.1694, lng: 71.4491 }, { lat: 51.174, lng: 71.455 }], tolerance: 60, enabled: true }] }, { merge: true });
-  batch.set(doc(db, 'devices', braceletId), { connected: true, worn: true, battery: 78, lastSyncAt: now, location: { lat: 51.1694, lng: 71.4491, address: 'Demo Home', updatedAt: now }, braceletLocation: { lat: 51.1694, lng: 71.4491, updatedAt: now }, heartRate: 72, spo2: 98, sos: { active: false, updatedAt: now } }, { merge: true });
-  [[72,98,0],[74,98,30],[69,97,60],[76,99,90]].forEach(([heartRate, spo2, minutes], index) => batch.set(doc(db, 'healthReadings', `care-band-demo-reading-${index}`), { wardId, heartRate, spo2, recordedAt: ago(minutes) }, { merge: true }));
-  [['demo-arrived','location','arrival','Arrived at Demo Home.','info',20],['demo-sync','bracelet','synced','Bracelet synchronized successfully.','info',10],['demo-health','health','health_normal','Health readings are within configured thresholds.','info',0]].forEach(([id, category, type, description, severity, minutes]) => batch.set(doc(db, 'events', `care-band-${id}`), { wardId, category, type, description, severity, requiresAttention: false, createdAt: ago(minutes as number) }, { merge: true }));
+  batch.set(doc(db, 'devices', braceletId), { connected: true, worn: true, battery: 78, lastSyncAt: now, location: { lat: 51.1694, lng: 71.4491, address: 'Demo Home', updatedAt: now }, braceletLocation: { lat: 51.1694, lng: 71.4491, updatedAt: now }, heartRate: 72, spo2: 98, sos: { active: false, updatedAt: now }, wardId }, { merge: true });
+  [[72,98,0],[74,98,30],[69,97,60],[76,99,90]].forEach(([heartRate, spo2, minutes], index) => batch.set(doc(db, 'healthReadings', `care-band-demo-reading-${index}-${suffix}`), { wardId, heartRate, spo2, recordedAt: ago(minutes) }, { merge: true }));
+  [['demo-arrived','location','arrival','Arrived at Demo Home.','info',20],['demo-sync','bracelet','synced','Bracelet synchronized successfully.','info',10],['demo-health','health','health_normal','Health readings are within configured thresholds.','info',0]].forEach(([id, category, type, description, severity, minutes]) => batch.set(doc(db, 'events', `care-band-${id}-${suffix}`), { wardId, category, type, description, severity, requiresAttention: false, createdAt: ago(minutes as number) }, { merge: true }));
   await batch.commit();
 }

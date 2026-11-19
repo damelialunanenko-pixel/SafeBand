@@ -1,0 +1,100 @@
+rules_version = '2';
+
+// SafeBand Firestore security rules.
+// Every client request needs a signed-in user whose email is verified (token claim).
+// Cloud Functions use the Admin SDK and are not affected by these rules.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function verified() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function wardPath(wardId) {
+      return /databases/$(database)/documents/wards/$(wardId);
+    }
+
+    // The ward exists (now) and belongs to the caller. Used for reads and as the "before" state.
+    function ownsWard(wardId) {
+      return wardId is string && get(wardPath(wardId)).data.guardianId == request.auth.uid;
+    }
+
+    // Same, but against the state after the current write/batch (e.g. seed data or bracelet
+    // binding that create the ward and the linked documents in one batch).
+    function ownsWardAfter(wardId) {
+      return wardId is string && getAfter(wardPath(wardId)).data.guardianId == request.auth.uid;
+    }
+
+    // ---- caregiver profile ------------------------------------------------------------------
+    // securityQuestionsSet is written only by the setSecurityAnswers Cloud Function.
+    match /users/{uid} {
+      allow read: if verified() && request.auth.uid == uid;
+      allow create: if verified() && request.auth.uid == uid
+        && !('securityQuestionsSet' in request.resource.data);
+      allow update: if verified() && request.auth.uid == uid
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['securityQuestionsSet']);
+      allow delete: if false; // done by the deleteAccountData Cloud Function
+    }
+
+    // ---- people in care ---------------------------------------------------------------------
+    match /wards/{wardId} {
+      allow read, delete: if verified() && resource.data.guardianId == request.auth.uid;
+      allow create: if verified() && request.resource.data.guardianId == request.auth.uid;
+      allow update: if verified()
+        && resource.data.guardianId == request.auth.uid
+        && request.resource.data.guardianId == request.auth.uid;
+    }
+
+    // ---- bracelets --------------------------------------------------------------------------
+    // devices/{braceletId}.wardId links the bracelet to a ward; only that ward's caregiver may
+    // read or write it. The ward must also point back at this bracelet (wards.braceletId).
+    match /devices/{braceletId} {
+      function linksToOwnWardAfter() {
+        let wardId = request.resource.data.get('wardId', null);
+        return ownsWardAfter(wardId)
+          && getAfter(wardPath(wardId)).data.get('braceletId', null) == braceletId;
+      }
+
+      // resource == null: a linked bracelet that has not reported yet reads as "no data".
+      allow read: if verified()
+        && (resource == null || ownsWard(resource.data.get('wardId', null)));
+      allow create: if verified() && linksToOwnWardAfter();
+      // A bracelet without wardId (created by the hardware before linking) can be claimed by
+      // the caregiver whose ward lists it; a linked one only by its current caregiver.
+      allow update: if verified()
+        && (resource.data.get('wardId', null) == null || ownsWard(resource.data.wardId))
+        && linksToOwnWardAfter();
+      allow delete: if false;
+    }
+
+    // ---- per-ward data ----------------------------------------------------------------------
+    match /events/{eventId} {
+      allow read: if verified() && ownsWard(resource.data.wardId);
+      allow create: if verified() && ownsWardAfter(request.resource.data.wardId);
+      allow update: if verified() && ownsWard(resource.data.wardId) && ownsWardAfter(request.resource.data.wardId);
+      allow delete: if false;
+    }
+
+    match /healthReadings/{readingId} {
+      allow read: if verified() && ownsWard(resource.data.wardId);
+      allow create: if verified() && ownsWardAfter(request.resource.data.wardId);
+      allow update: if verified() && ownsWard(resource.data.wardId) && ownsWardAfter(request.resource.data.wardId);
+      allow delete: if false;
+    }
+
+    // Written by the app's client-side alert automation (hooks/use-care-alerts.ts).
+    match /activeAlerts/{alertId} {
+      allow read: if verified() && ownsWard(resource.data.wardId);
+      allow create: if verified() && ownsWardAfter(request.resource.data.wardId);
+      allow update: if verified() && ownsWard(resource.data.wardId) && ownsWardAfter(request.resource.data.wardId);
+      allow delete: if false;
+    }
+
+    // ---- security questions: server only ----------------------------------------------------
+    match /securityAnswers/{uid} {
+      allow read, write: if false;
+    }
+
+    // Everything else is denied by default.
+  }
+}

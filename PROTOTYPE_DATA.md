@@ -17,8 +17,11 @@ The app reads Firestore in real time. All timestamps can be Firestore `Timestamp
 
 ## `devices/{braceletId}`
 
+`wardId` is required by `firestore.rules`: only the caregiver of that ward (whose `braceletId` must equal this document ID) can read or write the bracelet.
+
 ```json
 {
+  "wardId": "WARD_DOCUMENT_ID",
   "connected": true, "worn": true, "battery": 78,
   "lastSyncAt": "Firestore Timestamp",
   "location": { "lat": 51.1694, "lng": 71.4491, "address": "Home", "updatedAt": "Firestore Timestamp" },
@@ -32,7 +35,7 @@ The app writes `devices/{braceletId}.commands.alarm` as `sos_on` or `sos_off` af
 
 ## Repeatable fictional demo data
 
-Sign in, open **Settings** from the dashboard, then choose **Seed fictional demo data** and confirm. This writes the same deterministic `care-band-demo-*` documents each time for the signed-in caregiver; it updates those documents rather than creating duplicates and does not alter other people or devices. It is intended only for Firebase projects where your current Firestore rules allow the signed-in caregiver to write their own data.
+Sign in, open **Settings** from the dashboard, then choose **Seed fictional demo data** and confirm. This writes the same deterministic `care-band-demo-*-{uid}` documents each time for the signed-in caregiver; it updates those documents rather than creating duplicates and does not alter other people or devices. It is intended only for Firebase projects where your current Firestore rules allow the signed-in caregiver to write their own data.
 
 ## Historical health and events
 
