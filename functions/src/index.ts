@@ -3,6 +3,8 @@ import { onDocumentUpdated } from "firebase-functions/v2/firestore";
 
 admin.initializeApp();
 
+export { setSecurityAnswers, verifySecurityAnswers } from "./security.js";
+
 export const onDeviceUpdate = onDocumentUpdated(
   "devices/{braceletId}",
   async (event) => {
