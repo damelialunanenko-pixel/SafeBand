@@ -64,6 +64,10 @@ export type ThemeColors = {
   sky: string;
   cyan: string;
   lavender: string;
+  lavenderSoft: string;
+  onLavenderSoft: string;
+  cyanSoft: string;
+  onCyanSoft: string;
   success: string;
   successSoft: string;
   onSuccessSoft: string;
@@ -104,6 +108,10 @@ export const lightColors: ThemeColors = {
   sky: palette.sky,
   cyan: palette.cyan,
   lavender: palette.lavender,
+  lavenderSoft: '#EEF0FF',
+  onLavenderSoft: '#4F46E5',
+  cyanSoft: '#E0F9FD',
+  onCyanSoft: '#0E7490',
   success: palette.green,
   successSoft: palette.greenSoft,
   onSuccessSoft: palette.greenText,
@@ -141,6 +149,10 @@ export const darkColors: ThemeColors = {
   sky: palette.sky,
   cyan: palette.cyan,
   lavender: palette.lavender,
+  lavenderSoft: '#25284A',
+  onLavenderSoft: palette.lavender,
+  cyanSoft: '#0E2E38',
+  onCyanSoft: palette.cyan,
   success: palette.green,
   successSoft: '#0F2E1F',
   onSuccessSoft: '#4ADE80',

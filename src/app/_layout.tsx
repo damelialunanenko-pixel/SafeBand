@@ -3,6 +3,7 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider, useRouter, useSegments, 
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useMemo } from 'react';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
+import { ToastProvider } from '@/components/ui';
 import { LocalizationProvider, useLocalization } from '@/localization';
 import { requiredRoute } from '@/services/auth-flow';
 import { auth } from '@/services/firebase';
@@ -62,6 +63,7 @@ export default function RootLayout() {
       <SessionProvider>
         <AppThemeProvider>
           <NavigationTheme>
+            <ToastProvider>
             <AnimatedSplashOverlay />
             <AuthGuard />
             <Stack screenOptions={{ headerShown: false }}>
@@ -81,6 +83,7 @@ export default function RootLayout() {
               <Stack.Screen name="health" />
               <Stack.Screen name="settings" />
             </Stack>
+            </ToastProvider>
           </NavigationTheme>
         </AppThemeProvider>
       </SessionProvider>
