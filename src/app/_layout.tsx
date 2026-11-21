@@ -1,6 +1,7 @@
 import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider, useRouter, useSegments, type Href } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo } from 'react';
 import { useReducedMotion } from 'react-native-reanimated';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
@@ -47,7 +48,12 @@ function NavigationTheme({ children }: { children: React.ReactNode }) {
       colors: { ...base.colors, primary: colors.primary, background: colors.background, card: colors.card, text: colors.text, border: colors.border },
     };
   }, [isDark, colors]);
-  return <ThemeProvider value={value}>{children}</ThemeProvider>;
+  return (
+    <ThemeProvider value={value}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+      {children}
+    </ThemeProvider>
+  );
 }
 
 /** Screens slide in from the right (fade + slide from the bottom for modal-like screens), 300 ms. */

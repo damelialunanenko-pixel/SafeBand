@@ -123,7 +123,7 @@ export const lightColors: ThemeColors = {
   dangerSoft: palette.redSoft,
   onDangerSoft: palette.redText,
   iconButton: palette.white,
-  placeholder: '#7C8BA3',
+  placeholder: '#66758C',
   overlay: 'rgba(15, 27, 61, 0.38)',
   skeleton: '#E6EDF8',
   skeletonHighlight: '#F6F9FE',
