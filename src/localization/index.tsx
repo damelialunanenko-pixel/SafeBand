@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { formsDictionaries } from './forms';
+import { uiDictionaries } from './ui';
 
 export type Language = 'ru' | 'en' | 'kk';
 type Values = Record<string, string | number>;
@@ -41,9 +42,9 @@ const baseDictionaries: Record<Language, Dictionary> = {
 };
 
 const dictionaries: Record<Language, Dictionary> = {
-  en: { ...baseDictionaries.en, ...formsDictionaries.en },
-  ru: { ...baseDictionaries.ru, ...formsDictionaries.ru },
-  kk: { ...baseDictionaries.kk, ...formsDictionaries.kk },
+  en: { ...baseDictionaries.en, ...formsDictionaries.en, ...uiDictionaries.en },
+  ru: { ...baseDictionaries.ru, ...formsDictionaries.ru, ...uiDictionaries.ru },
+  kk: { ...baseDictionaries.kk, ...formsDictionaries.kk, ...uiDictionaries.kk },
 };
 
 type Localization = { language: Language; setLanguage: (language: Language) => Promise<void>; t: (key: keyof typeof dictionaries.en, values?: Values) => string };

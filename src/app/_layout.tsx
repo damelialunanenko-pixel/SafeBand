@@ -2,6 +2,7 @@ import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider, useRouter, useSegments, type Href } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useMemo } from 'react';
+import { useReducedMotion } from 'react-native-reanimated';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { ToastProvider } from '@/components/ui';
 import { LocalizationProvider, useLocalization } from '@/localization';
@@ -22,7 +23,8 @@ function AuthGuard() {
   const { language } = useLocalization();
   const router = useRouter();
   const segments = useSegments();
-  const segment = (segments[0] as string | undefined) ?? '';
+  // First real path segment: route groups like `(tabs)` are not part of the URL.
+  const segment = (segments as string[]).find((part) => !part.startsWith('(')) ?? '';
 
   // Firebase emails (verification, password reset) in the app language.
   useEffect(() => { auth.languageCode = language; }, [language]);
@@ -48,6 +50,30 @@ function NavigationTheme({ children }: { children: React.ReactNode }) {
   return <ThemeProvider value={value}>{children}</ThemeProvider>;
 }
 
+/** Screens slide in from the right (fade + slide from the bottom for modal-like screens), 300 ms. */
+function RootStack() {
+  const reduceMotion = useReducedMotion();
+  const { colors } = useAppTheme();
+  const push = reduceMotion ? 'none' : 'slide_from_right';
+  const modal = reduceMotion ? 'none' : 'fade_from_bottom';
+  return (
+    <Stack screenOptions={{ headerShown: false, animation: push, animationDuration: 300, contentStyle: { backgroundColor: colors.background } }}>
+      <Stack.Screen name="index" options={{ animation: reduceMotion ? 'none' : 'fade' }} />
+      <Stack.Screen name="auth" />
+      <Stack.Screen name="register" />
+      <Stack.Screen name="privacy" options={{ animation: modal }} />
+      <Stack.Screen name="verify-email" />
+      <Stack.Screen name="security-setup" />
+      <Stack.Screen name="security-check" />
+      <Stack.Screen name="guardian-profile" />
+      <Stack.Screen name="(tabs)" options={{ animation: reduceMotion ? 'none' : 'fade' }} />
+      <Stack.Screen name="ward" options={{ animation: modal }} />
+      <Stack.Screen name="bracelet" />
+      <Stack.Screen name="history" />
+    </Stack>
+  );
+}
+
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts(fontAssets);
   const ready = fontsLoaded || Boolean(fontError);
@@ -64,25 +90,9 @@ export default function RootLayout() {
         <AppThemeProvider>
           <NavigationTheme>
             <ToastProvider>
-            <AnimatedSplashOverlay />
-            <AuthGuard />
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="auth" />
-              <Stack.Screen name="register" />
-              <Stack.Screen name="privacy" />
-              <Stack.Screen name="verify-email" />
-              <Stack.Screen name="security-setup" />
-              <Stack.Screen name="security-check" />
-              <Stack.Screen name="guardian-profile" />
-              <Stack.Screen name="home" />
-              <Stack.Screen name="ward" />
-              <Stack.Screen name="bracelet" />
-              <Stack.Screen name="map" />
-              <Stack.Screen name="history" />
-              <Stack.Screen name="health" />
-              <Stack.Screen name="settings" />
-            </Stack>
+              <AnimatedSplashOverlay />
+              <AuthGuard />
+              <RootStack />
             </ToastProvider>
           </NavigationTheme>
         </AppThemeProvider>
