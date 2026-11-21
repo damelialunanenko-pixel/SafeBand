@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Text, View } from 'react-native';
-import { Button, Card, Screen, StepIndicator, Subtitle, Title, colors, s as form } from '@/components/form';
+import { Button, Card, FormMessage, Screen, StepIndicator, Subtitle, SummaryRow, Title } from '@/components/form';
+import { AppText } from '@/components/ui';
 import { SecurityQuestionsForm } from '@/components/security-questions-form';
 import { SECURITY_QUESTIONS, areSecurityAnswersComplete, emptySecurityAnswers, optionLabel, type SecurityAnswers } from '@/config/security-questions';
 import { useLocalization } from '@/localization';
@@ -31,17 +31,14 @@ export default function SecuritySetupScreen() {
     <Screen>
       <StepIndicator step={3} total={REGISTRATION_STEPS} title={t('stepSecurity')} />
       <Title>{reviewing ? t('checkAnswersTitle') : t('securityTitle')}</Title>
-      <Card><Text style={{ color: colors.title, fontWeight: '700', lineHeight: 21 }}>{t('securityHint')}</Text></Card>
+      <Card><AppText variant="bodyStrong">{t('securityHint')}</AppText></Card>
       {reviewing ? (
         <>
           <Subtitle>{t('checkAnswersHint')}</Subtitle>
           {SECURITY_QUESTIONS.map((q, i) => (
-            <View key={q.id} style={form.field}>
-              <Text style={form.label}>{i + 1}. {q.label[language]}</Text>
-              <Text style={{ fontSize: 18, color: colors.title, fontWeight: '700' }}>{optionLabel(q.options, answers[q.id], language)}</Text>
-            </View>
+            <SummaryRow key={q.id} label={`${i + 1}. ${q.label[language]}`} value={optionLabel(q.options, answers[q.id], language)} />
           ))}
-          {error ? <Text style={form.error}>{t(error)}</Text> : null}
+          {error ? <FormMessage>{t(error)}</FormMessage> : null}
           <Button title={t('saveAnswers')} onPress={() => void save()} loading={saving} />
           <Button variant="secondary" title={t('change')} onPress={() => setReviewing(false)} disabled={saving} />
         </>

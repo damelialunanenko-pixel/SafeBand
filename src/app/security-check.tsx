@@ -1,7 +1,6 @@
 import { signOut } from 'firebase/auth';
 import { useState } from 'react';
-import { Text } from 'react-native';
-import { Button, Screen, Subtitle, Title, s as form } from '@/components/form';
+import { Button, FormMessage, Screen, Subtitle, Title } from '@/components/form';
 import { SecurityQuestionsForm } from '@/components/security-questions-form';
 import { areSecurityAnswersComplete, emptySecurityAnswers, type SecurityAnswers } from '@/config/security-questions';
 import { useLocalization } from '@/localization';
@@ -38,7 +37,7 @@ export default function SecurityCheckScreen() {
       <Title>{t('securityCheckTitle')}</Title>
       <Subtitle>{t('securityCheckBody')}</Subtitle>
       <SecurityQuestionsForm value={answers} onChange={setAnswers} />
-      {message ? <Text style={form.error} accessibilityLiveRegion="polite">{message}</Text> : null}
+      {message ? <FormMessage>{message}</FormMessage> : null}
       <Button title={t('verifyAnswers')} onPress={() => void verify()} disabled={!areSecurityAnswersComplete(answers)} loading={checking} />
       <Button variant="link" title={t('signOut')} onPress={() => void signOut(auth)} />
     </Screen>

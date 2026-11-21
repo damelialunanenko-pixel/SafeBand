@@ -1,7 +1,6 @@
 import { sendEmailVerification, signOut } from 'firebase/auth';
 import { useEffect, useState } from 'react';
-import { Text } from 'react-native';
-import { Button, Screen, StepIndicator, Subtitle, Title, colors, s as form } from '@/components/form';
+import { Button, FormMessage, Hint, Screen, StepIndicator, Subtitle, Title } from '@/components/form';
 import { useLocalization } from '@/localization';
 import { errorKey } from '@/services/auth-errors';
 import { auth } from '@/services/firebase';
@@ -47,10 +46,10 @@ export default function VerifyEmailScreen() {
       <StepIndicator step={2} total={REGISTRATION_STEPS} title={t('stepEmail')} />
       <Title>{t('verifyTitle')}</Title>
       <Subtitle>{t('verifyBody', { email: user?.email ?? '' })}</Subtitle>
-      {message ? <Text style={message.error ? form.error : [form.hint, { color: colors.ok }]}>{t(message.key)}</Text> : null}
+      {message ? <FormMessage tone={message.error ? 'danger' : 'success'}>{t(message.key)}</FormMessage> : null}
       <Button title={t('verifyDone')} onPress={() => void check()} loading={checking} />
       <Button variant="secondary" title={secondsLeft ? t('verifyResendIn', { s: secondsLeft }) : t('verifyResend')} onPress={() => void resend()} disabled={secondsLeft > 0} />
-      <Text style={[form.hint, { marginTop: 24 }]}>{t('verifyWrongEmail')}</Text>
+      <Hint>{t('verifyWrongEmail')}</Hint>
       <Button variant="link" title={t('signOut')} onPress={() => void signOut(auth)} />
     </Screen>
   );

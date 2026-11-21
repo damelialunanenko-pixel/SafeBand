@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Text } from 'react-native';
-import { Button, Field, Screen, StepIndicator, Subtitle, Title, s as form, useTouched } from '@/components/form';
+import { Alert } from 'react-native';
+import { Button, Field, FormMessage, Screen, StepIndicator, Subtitle, Title, useTouched } from '@/components/form';
 import { useLocalization } from '@/localization';
 import { bindBracelet } from '@/services/care-repository';
 import { REGISTRATION_STEPS } from '@/services/registration-steps';
@@ -37,9 +37,9 @@ export default function BraceletScreen() {
       {onboarding ? <StepIndicator step={6} total={REGISTRATION_STEPS} title={t('stepBracelet')} /> : null}
       <Title>{t('braceletTitle')}</Title>
       <Subtitle>{t('braceletBody')}</Subtitle>
-      <Field label={t('braceletId')} value={braceletId} onChangeText={setBraceletId} onTouched={() => touch('braceletId')}
+      <Field icon="watch-outline" label={t('braceletId')} value={braceletId} onChangeText={setBraceletId} onTouched={() => touch('braceletId')}
         error={shown('braceletId', idError)} placeholder={t('braceletPlaceholder')} autoCapitalize="characters" autoCorrect={false} />
-      {error ? <Text style={form.error}>{t(error)}</Text> : null}
+      {error ? <FormMessage>{t(error)}</FormMessage> : null}
       <Button title={t('bindBracelet')} onPress={() => void bind()} disabled={!!idError || !wardId} loading={saving} />
       <Button variant="secondary" title={t('bindLater')} onPress={() => router.replace('/home')} disabled={saving} />
     </Screen>

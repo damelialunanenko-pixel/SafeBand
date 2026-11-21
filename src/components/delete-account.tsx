@@ -1,12 +1,13 @@
 import { deleteUser, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
 import { useState } from 'react';
-import { Alert, Text } from 'react-native';
+import { Alert } from 'react-native';
 import { useLocalization } from '@/localization';
 import { errorKey } from '@/services/auth-errors';
 import { auth, functions } from '@/services/firebase';
 import { clearLocalUserData } from '@/services/local-store';
-import { Button, PasswordField, s as form } from './form';
+import { Button, FormMessage, PasswordField } from './form';
+import { AppText } from './ui';
 
 const deleteAccountData = httpsCallable<void, { ok: true }>(functions, 'deleteAccountData');
 
@@ -53,12 +54,12 @@ export function DeleteAccountCard() {
 
   return (
     <>
-      <Text style={form.label}>{t('deleteAccount')}</Text>
-      <Text style={form.hint}>{t('deleteAccountDescription')}</Text>
+      <AppText variant="title" tone="danger">{t('deleteAccount')}</AppText>
+      <AppText variant="caption" tone="muted">{t('deleteAccountDescription')}</AppText>
       {open ? (
         <>
           <PasswordField label={t('deleteAccountPassword')} value={password} onChangeText={setPassword} placeholder={t('passwordPlaceholder')} autoComplete="current-password" />
-          {error ? <Text style={form.error}>{t(error)}</Text> : null}
+          {error ? <FormMessage>{t(error)}</FormMessage> : null}
           <Button variant="danger" title={t('deleteAccount')} onPress={confirmTwice} disabled={!password} loading={busy} />
           <Button variant="link" title={t('cancel')} onPress={() => { setOpen(false); setPassword(''); setError(null); }} disabled={busy} />
         </>

@@ -1,10 +1,9 @@
 import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useState } from 'react';
-import { ActivityIndicator, Switch, Text, View } from 'react-native';
 import { AddressFields } from '@/components/address-fields';
 import {
-  Button, Field, Hint, MultiSelect, PhoneField, Screen, SectionTitle, StepIndicator, Title, colors, s as form, useTouched,
+  Button, Field, FormMessage, FormSkeleton, Hint, MultiSelect, PhoneField, Screen, SectionTitle, StepIndicator, SwitchRow, Title, useTouched,
 } from '@/components/form';
 import { DIAGNOSIS_OPTIONS } from '@/config/profile-options';
 import { useDraft } from '@/hooks/use-draft';
@@ -50,7 +49,7 @@ export default function WardScreen() {
     }
   };
 
-  if (!ready) return <Screen scroll={false}><ActivityIndicator color={colors.primary} /></Screen>;
+  if (!ready) return <Screen scroll={false}><FormSkeleton label={t('loading')} /></Screen>;
 
   return (
     <Screen>
@@ -65,7 +64,7 @@ export default function WardScreen() {
         error={shown('middleName', errors.middleName)} placeholder={t('wardMiddleNamePlaceholder')} autoCapitalize="words" />
       <Field label={t('birthDate')} value={f.birthDate} onChangeText={(v) => set('birthDate', formatDateInput(v))} onTouched={() => touch('birthDate')}
         error={shown('birthDate', errors.birthDate)} placeholder={t('birthDatePlaceholder')} keyboardType="number-pad" maxLength={10} />
-      {age !== null ? <Text style={[form.hint, { marginTop: -8, color: colors.ok, fontWeight: '700' }]}>{t('ageYears', { n: age })}</Text> : null}
+      {age !== null ? <Hint tone="success">{t('ageYears', { n: age })}</Hint> : null}
 
       <MultiSelect label={t('diagnosesTitle')} hint={t('diagnosesHint')} options={DIAGNOSIS_OPTIONS} value={f.diagnoses}
         onChange={(ids) => { set('diagnoses', ids); touch('diagnoses'); }} error={shown('diagnoses', errors.diagnoses)} />
@@ -76,10 +75,7 @@ export default function WardScreen() {
 
       <SectionTitle>{t('wardAddress')}</SectionTitle>
       {guardianAddress ? (
-        <View style={[form.checkRow, { justifyContent: 'space-between' }]}>
-          <Text style={form.checkText}>{t('sameAsGuardian')}</Text>
-          <Switch value={f.sameAddress} onValueChange={(v) => set('sameAddress', v)} accessibilityLabel={t('sameAsGuardian')} />
-        </View>
+        <SwitchRow label={t('sameAsGuardian')} value={f.sameAddress} onValueChange={(v) => set('sameAddress', v)} />
       ) : null}
       {!form_.sameAddress ? <AddressFields value={f} onChange={set} errors={errors} touch={touch} shown={shown} /> : null}
 
@@ -92,7 +88,7 @@ export default function WardScreen() {
         error={shown('hospitalPhone', errors.hospitalPhone)} placeholder={t('phonePlaceholder')} />
 
       <Hint>{t('draftHint')}</Hint>
-      {error ? <Text style={form.error}>{t(error)}</Text> : null}
+      {error ? <FormMessage>{t(error)}</FormMessage> : null}
       <Button title={t('next')} onPress={() => void save()} disabled={!isValid(errors)} loading={saving} />
       {!onboarding ? <Button variant="secondary" title={t('back')} onPress={() => router.back()} /> : null}
     </Screen>

@@ -1,9 +1,8 @@
 import { useRouter, type Href } from 'expo-router';
 import { doc, serverTimestamp, setDoc, Timestamp } from 'firebase/firestore';
 import { useState } from 'react';
-import { ActivityIndicator, Text } from 'react-native';
 import { AddressFields } from '@/components/address-fields';
-import { Button, Field, Hint, PhoneField, Screen, SectionTitle, SelectField, StepIndicator, Subtitle, Title, colors, s as form, useTouched } from '@/components/form';
+import { Button, Field, FormMessage, FormSkeleton, Hint, PhoneField, Screen, SectionTitle, SelectField, StepIndicator, Subtitle, Title, useTouched } from '@/components/form';
 import { RELATION_OPTIONS } from '@/config/profile-options';
 import { useDraft } from '@/hooks/use-draft';
 import { useLocalization } from '@/localization';
@@ -57,7 +56,7 @@ export default function GuardianProfileScreen() {
     }
   };
 
-  if (!ready) return <Screen scroll={false}><ActivityIndicator color={colors.primary} /></Screen>;
+  if (!ready) return <Screen scroll={false}><FormSkeleton label={t('loading')} /></Screen>;
 
   return (
     <Screen>
@@ -84,7 +83,7 @@ export default function GuardianProfileScreen() {
       <SectionTitle>{t('addressTitle')}</SectionTitle>
       <AddressFields value={f} onChange={set} errors={errors} touch={touch} shown={shown} />
       <Hint>{t('draftHint')}</Hint>
-      {error ? <Text style={form.error}>{t(error)}</Text> : null}
+      {error ? <FormMessage>{t(error)}</FormMessage> : null}
       <Button title={onboarding ? t('next') : t('save')} onPress={() => void save()} disabled={!isValid(errors)} loading={saving} />
       {!onboarding ? <Button variant="secondary" title={t('back')} onPress={() => router.back()} /> : null}
     </Screen>

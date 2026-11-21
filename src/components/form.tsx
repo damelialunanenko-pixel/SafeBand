@@ -1,17 +1,21 @@
-import { useState } from 'react';
-import {
-  ActivityIndicator, FlatList, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text,
-  TextInput, View, type TextInputProps,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+/**
+ * Form building blocks for sign-in, registration and profile screens, built on the
+ * themed UI kit in ./ui. Validation stays in services/validation.ts; errors arrive
+ * here as translation keys.
+ */
+import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useState, type ReactNode } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, Switch, View, type TextInputProps } from 'react-native';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Option } from '@/config/security-questions';
 import { useLocalization } from '@/localization';
 import { formatPhoneInput } from '@/services/validation';
-
-export const colors = {
-  page: '#f4f9ff', card: '#ffffff', title: '#102a43', text: '#334e68', muted: '#5c7085', label: '#3974a5',
-  primary: '#1976d2', border: '#c9d8e8', error: '#c62828', ok: '#2e7d32', placeholder: '#8296ab',
-};
+import { makeStyles, useAppTheme } from '@/theme';
+import {
+  Appear, AppText, Button as UiButton, Card as UiCard, Icon, Input, PressableScale, Select, selectionHaptic, Skeleton, type IconName,
+  type TextTone,
+} from './ui';
 
 /** Tracks which fields the user has touched, so errors appear only after the first interaction. */
 export function useTouched<K extends string>() {
@@ -23,85 +27,151 @@ export function useTouched<K extends string>() {
   return { touched, touch, touchAll, shown };
 }
 
-export function Screen({ children, scroll = true }: { children: React.ReactNode; scroll?: boolean }) {
+/** Page with a soft blue glow at the top, keyboard avoidance and a scrolling column. */
+export function Screen({ children, scroll = true }: { children: ReactNode; scroll?: boolean }) {
+  const { gradients } = useAppTheme();
+  const insets = useSafeAreaInsets();
+  const s = useStyles();
+  const padding = { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 40 };
   return (
-    <SafeAreaView style={s.page}>
+    <View style={s.page}>
+      <LinearGradient colors={[gradients.header[0], gradients.header[1], 'transparent']} locations={[0, 0.55, 1]} style={s.glow} pointerEvents="none" />
       <KeyboardAvoidingView style={s.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        {scroll ? <ScrollView contentContainerStyle={s.content} keyboardShouldPersistTaps="handled">{children}</ScrollView> : <View style={[s.flex, s.content]}>{children}</View>}
+        {scroll ? (
+          <ScrollView contentContainerStyle={[s.content, padding]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+            <Appear>{children}</Appear>
+          </ScrollView>
+        ) : (
+          <View style={[s.flex, s.content, s.centered, padding]}>{children}</View>
+        )}
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
+/** “Step n of m · title” with a bar that fills from the previous step to this one. */
 export function StepIndicator({ step, total, title }: { step: number; total: number; title: string }) {
   const { t } = useLocalization();
+  const { motion } = useAppTheme();
+  const s = useStyles();
+  const progress = useSharedValue((step - 1) / total);
+  useEffect(() => {
+    progress.set(withTiming(step / total, { duration: motion.slow * 2, easing: Easing.out(Easing.cubic) }));
+  }, [step, total, progress, motion]);
+  const fill = useAnimatedStyle(() => ({ width: `${progress.get() * 100}%` }));
   return (
-    <View style={s.steps} accessibilityRole="progressbar" accessibilityValue={{ min: 1, max: total, now: step }}>
-      <Text style={s.stepText}>{t('stepOf', { n: step, m: total })} · {title}</Text>
-      <View style={s.stepBar}>
-        {Array.from({ length: total }, (_, i) => <View key={i} style={[s.stepDot, i < step && s.stepDotDone]} />)}
+    <View
+      style={s.steps}
+      accessible
+      accessibilityRole="progressbar"
+      accessibilityLabel={`${t('stepProgress')}: ${t('stepOf', { n: step, m: total })}, ${title}`}
+      accessibilityValue={{ min: 1, max: total, now: step }}
+    >
+      <View style={s.stepHead}>
+        <AppText variant="captionStrong" tone="primary">{t('stepOf', { n: step, m: total })}</AppText>
+        <AppText variant="caption" tone="muted" style={s.flex} numberOfLines={1}>· {title}</AppText>
+      </View>
+      <View style={s.stepTrack}>
+        <Animated.View style={[s.stepFill, fill]} />
       </View>
     </View>
   );
 }
 
-export const Title = ({ children }: { children: React.ReactNode }) => <Text style={s.title} accessibilityRole="header">{children}</Text>;
-export const Subtitle = ({ children }: { children: React.ReactNode }) => <Text style={s.subtitle}>{children}</Text>;
-export const SectionTitle = ({ children }: { children: React.ReactNode }) => <Text style={s.section}>{children}</Text>;
-export const Hint = ({ children }: { children: React.ReactNode }) => <Text style={s.hint}>{children}</Text>;
+export const Title = ({ children }: { children: ReactNode }) => {
+  const s = useStyles();
+  return <AppText variant="display" accessibilityRole="header" style={s.title}>{children}</AppText>;
+};
+export const Subtitle = ({ children }: { children: ReactNode }) => {
+  const s = useStyles();
+  return <AppText variant="body" tone="secondary" style={s.subtitle}>{children}</AppText>;
+};
+export const SectionTitle = ({ children }: { children: ReactNode }) => {
+  const s = useStyles();
+  return <AppText variant="h2" accessibilityRole="header" style={s.section}>{children}</AppText>;
+};
+export const Hint = ({ children, tone = 'muted' }: { children: ReactNode; tone?: TextTone }) => {
+  const s = useStyles();
+  return <AppText variant="caption" tone={tone} style={s.hint}>{children}</AppText>;
+};
 
-export function FieldError({ error }: { error?: string | null }) {
-  const { t } = useLocalization();
-  return error ? <Text style={s.error} accessibilityLiveRegion="polite">{t(error)}</Text> : null;
+/** Form-level message: error (red) or success (green) banner. */
+export function FormMessage({ children, tone = 'danger' }: { children: ReactNode; tone?: 'danger' | 'success' }) {
+  const { colors } = useAppTheme();
+  const s = useStyles();
+  const danger = tone === 'danger';
+  return (
+    <View style={[s.message, danger ? s.messageDanger : s.messageSuccess]} accessibilityLiveRegion="polite" accessibilityRole={danger ? 'alert' : 'text'}>
+      <Icon name={danger ? 'alert-circle' : 'checkmark-circle'} size={20} color={danger ? colors.onDangerSoft : colors.onSuccessSoft} />
+      <AppText variant="bodyMedium" tone={danger ? 'danger' : 'success'} style={s.flex}>{children}</AppText>
+    </View>
+  );
+}
+
+/** Inline link inside a sentence (e.g. the privacy policy in the consent checkbox). */
+export function InlineLink({ children, onPress }: { children: ReactNode; onPress: () => void }) {
+  return <AppText variant="bodyStrong" tone="primary" accessibilityRole="link" onPress={onPress} suppressHighlighting>{children}</AppText>;
 }
 
 type FieldProps = Omit<TextInputProps, 'onChangeText' | 'value' | 'style'> & {
   label: string; value: string; onChangeText: (v: string) => void; error?: string | null; hint?: string;
-  onTouched?: () => void; right?: React.ReactNode;
+  onTouched?: () => void; right?: ReactNode; icon?: IconName;
 };
 
-export function Field({ label, value, onChangeText, error, hint, onTouched, right, ...input }: FieldProps) {
+export function Field({ label, value, onChangeText, error, hint, onTouched, right, icon, ...input }: FieldProps) {
+  const { t } = useLocalization();
   return (
-    <View style={s.field}>
-      <Text style={s.label}>{label}</Text>
-      {hint ? <Text style={s.hint}>{hint}</Text> : null}
-      <View style={[s.inputRow, error ? s.inputError : null]}>
-        <TextInput
-          {...input}
-          value={value}
-          accessibilityLabel={label}
-          placeholderTextColor={colors.placeholder}
-          style={s.input}
-          onChangeText={(v) => { onChangeText(v); onTouched?.(); }}
-          onBlur={(e) => { onTouched?.(); input.onBlur?.(e); }}
-        />
-        {right}
-      </View>
-      <FieldError error={error} />
-    </View>
+    <Input
+      {...input}
+      label={label}
+      hint={hint}
+      icon={icon}
+      right={right}
+      value={value}
+      error={error ? t(error) : null}
+      onChangeText={(v) => { onChangeText(v); onTouched?.(); }}
+      onBlur={(e) => { onTouched?.(); input.onBlur?.(e); }}
+    />
   );
 }
 
 export function PasswordField(props: Omit<FieldProps, 'right' | 'secureTextEntry'>) {
   const { t } = useLocalization();
+  const { colors } = useAppTheme();
+  const s = useStyles();
   const [visible, setVisible] = useState(false);
   return (
     <Field
+      icon="lock-closed-outline"
       {...props}
       secureTextEntry={!visible}
       autoCapitalize="none"
       autoCorrect={false}
       right={
-        <Pressable onPress={() => setVisible((v) => !v)} accessibilityRole="button" style={s.inlineButton} hitSlop={8}>
-          <Text style={s.link}>{visible ? t('hidePassword') : t('showPassword')}</Text>
-        </Pressable>
+        <PressableScale
+          onPress={() => setVisible((v) => !v)}
+          haptic={false}
+          accessibilityLabel={visible ? t('hidePassword') : t('showPassword')}
+          style={s.eye}
+        >
+          <Icon name={visible ? 'eye-off-outline' : 'eye-outline'} size={22} color={colors.textMuted} />
+        </PressableScale>
       }
     />
   );
 }
 
 export function PhoneField(props: Omit<FieldProps, 'keyboardType'>) {
-  return <Field {...props} keyboardType="phone-pad" autoComplete="tel" textContentType="telephoneNumber" onChangeText={(v) => props.onChangeText(formatPhoneInput(v))} />;
+  return (
+    <Field
+      icon="call-outline"
+      {...props}
+      keyboardType="phone-pad"
+      autoComplete="tel"
+      textContentType="telephoneNumber"
+      onChangeText={(v) => props.onChangeText(formatPhoneInput(v))}
+    />
+  );
 }
 
 export function SelectField({ label, value, options, onChange, error, hint, onTouched, searchable }: {
@@ -109,161 +179,200 @@ export function SelectField({ label, value, options, onChange, error, hint, onTo
   onTouched?: () => void; searchable?: boolean;
 }) {
   const { t, language } = useLocalization();
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const selected = options.find((o) => o.id === value);
-  const visible = query ? options.filter((o) => o.label[language].toLowerCase().includes(query.toLowerCase())) : options;
-  const close = () => { setOpen(false); setQuery(''); onTouched?.(); };
   return (
-    <View style={s.field}>
-      <Text style={s.label}>{label}</Text>
-      {hint ? <Text style={s.hint}>{hint}</Text> : null}
-      <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={() => setOpen(true)} style={[s.inputRow, s.select, error ? s.inputError : null]}>
-        <Text style={selected ? s.selectValue : s.selectPlaceholder}>{selected ? selected.label[language] : t('choose')}</Text>
-        <Text style={s.chevron}>▾</Text>
-      </Pressable>
-      <FieldError error={error} />
-      <Modal visible={open} animationType="slide" onRequestClose={close}>
-        <SafeAreaView style={s.page}>
-          <View style={s.modalHeader}>
-            <Text style={s.modalTitle}>{label}</Text>
-            <Pressable onPress={close} accessibilityRole="button" hitSlop={10}><Text style={s.link}>{t('cancel')}</Text></Pressable>
-          </View>
-          {searchable ? <TextInput value={query} onChangeText={setQuery} placeholder={t('search')} placeholderTextColor={colors.placeholder} style={[s.input, s.search]} /> : null}
-          <FlatList
-            data={visible}
-            keyExtractor={(o) => o.id}
-            keyboardShouldPersistTaps="handled"
-            numColumns={options.every((o) => o.label[language].length <= 2) ? 6 : 1}
-            contentContainerStyle={s.modalList}
-            renderItem={({ item }) => (
-              <Pressable
-                accessibilityRole="radio"
-                accessibilityState={{ selected: item.id === value }}
-                onPress={() => { onChange(item.id); close(); }}
-                style={[s.option, item.id === value && s.optionSelected, item.label[language].length <= 2 && s.optionLetter]}
-              >
-                <Text style={s.optionText}>{item.label[language]}</Text>
-              </Pressable>
-            )}
-          />
-        </SafeAreaView>
-      </Modal>
-    </View>
+    <Select
+      label={label}
+      hint={hint}
+      value={value}
+      options={options.map((o) => ({ id: o.id, label: o.label[language] }))}
+      onChange={onChange}
+      onClose={onTouched}
+      searchable={searchable}
+      error={error ? t(error) : null}
+    />
   );
 }
 
 export function MultiSelect({ label, hint, options, value, onChange, error }: {
   label: string; hint?: string; options: Option[]; value: string[]; onChange: (ids: string[]) => void; error?: string | null;
 }) {
-  const { language } = useLocalization();
+  const { t, language } = useLocalization();
+  const s = useStyles();
   const toggle = (id: string) => onChange(value.includes(id) ? value.filter((v) => v !== id) : [...value, id]);
   return (
     <View style={s.field}>
-      <Text style={s.label}>{label}</Text>
-      {hint ? <Text style={s.hint}>{hint}</Text> : null}
-      {options.map((o) => {
-        const on = value.includes(o.id);
-        return (
-          <Pressable key={o.id} accessibilityRole="checkbox" accessibilityState={{ checked: on }} onPress={() => toggle(o.id)} style={[s.checkRow, on && s.optionSelected]}>
-            <View style={[s.box, on && s.boxOn]}>{on ? <Text style={s.boxMark}>✓</Text> : null}</View>
-            <Text style={s.checkText}>{o.label[language]}</Text>
-          </Pressable>
-        );
-      })}
-      <FieldError error={error} />
+      <AppText variant="captionStrong" tone="secondary" style={s.fieldLabel}>{label}</AppText>
+      {hint ? <AppText variant="caption" tone="muted" style={s.fieldLabel}>{hint}</AppText> : null}
+      <View style={s.checkList}>
+        {options.map((o) => (
+          <CheckRow key={o.id} checked={value.includes(o.id)} onPress={() => toggle(o.id)} label={o.label[language]} role="checkbox" />
+        ))}
+      </View>
+      {error ? <FieldErrorText>{t(error)}</FieldErrorText> : null}
     </View>
   );
 }
 
-export function Checkbox({ checked, onChange, children, error }: { checked: boolean; onChange: (v: boolean) => void; children: React.ReactNode; error?: string | null }) {
+export function Checkbox({ checked, onChange, children, error, label }: {
+  checked: boolean; onChange: (v: boolean) => void; children: ReactNode; error?: string | null; label?: string;
+}) {
+  const { t } = useLocalization();
+  const s = useStyles();
   return (
     <View style={s.field}>
-      <Pressable accessibilityRole="checkbox" accessibilityState={{ checked }} onPress={() => onChange(!checked)} style={s.checkRow}>
-        <View style={[s.box, checked && s.boxOn]}>{checked ? <Text style={s.boxMark}>✓</Text> : null}</View>
-        <View style={s.flex}>{children}</View>
-      </Pressable>
-      <FieldError error={error} />
+      <CheckRow checked={checked} onPress={() => onChange(!checked)} role="checkbox" label={label}>{children}</CheckRow>
+      {error ? <FieldErrorText>{t(error)}</FieldErrorText> : null}
+    </View>
+  );
+}
+
+function CheckRow({ checked, onPress, label, children, role }: {
+  checked: boolean; onPress: () => void; label?: string; children?: ReactNode; role: 'checkbox';
+}) {
+  const { colors } = useAppTheme();
+  const s = useStyles();
+  return (
+    <PressableScale
+      accessibilityRole={role}
+      accessibilityState={{ checked }}
+      accessibilityLabel={label}
+      haptic={false}
+      scaleTo={0.98}
+      onPress={() => { selectionHaptic(); onPress(); }}
+      style={[s.checkRow, checked && s.checkRowOn]}
+    >
+      <View style={[s.box, checked && s.boxOn]}>{checked ? <Icon name="checkmark" size={16} color={colors.onPrimary} /> : null}</View>
+      <View style={s.flex}>{children ?? <AppText variant="bodyMedium">{label}</AppText>}</View>
+    </PressableScale>
+  );
+}
+
+function FieldErrorText({ children }: { children: ReactNode }) {
+  const { colors } = useAppTheme();
+  const s = useStyles();
+  return (
+    <View style={s.errorRow} accessibilityLiveRegion="polite">
+      <Icon name="alert-circle" size={15} color={colors.onDangerSoft} />
+      <AppText variant="caption" tone="danger" style={s.flex}>{children}</AppText>
     </View>
   );
 }
 
 /** A rule that turns green when satisfied (password checklist). */
-export const RuleRow = ({ ok, text }: { ok: boolean; text: string }) => (
-  <Text style={[s.rule, ok ? s.ruleOk : null]} accessibilityState={{ checked: ok }}>{ok ? '✓' : '•'} {text}</Text>
-);
-
-export function Button({ title, onPress, disabled, loading, variant = 'primary', big }: {
-  title: string; onPress: () => void; disabled?: boolean; loading?: boolean; variant?: 'primary' | 'secondary' | 'danger' | 'link'; big?: boolean;
-}) {
-  const off = disabled || loading;
+export function RuleRow({ ok, text }: { ok: boolean; text: string }) {
+  const { colors } = useAppTheme();
+  const s = useStyles();
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ disabled: off, busy: loading }}
-      disabled={off}
-      onPress={onPress}
-      style={[s.button, VARIANTS[variant], big && s.big, off && s.disabled]}
-    >
-      {loading ? <ActivityIndicator color={variant === 'secondary' || variant === 'link' ? colors.primary : '#fff'} /> : (
-        <Text style={[s.buttonText, (variant === 'secondary' || variant === 'link') && s.buttonTextAlt]}>{title}</Text>
-      )}
-    </Pressable>
+    <View style={s.rule} accessible accessibilityLabel={text} accessibilityState={{ checked: ok }}>
+      <Icon name={ok ? 'checkmark-circle' : 'ellipse-outline'} size={16} color={ok ? colors.success : colors.textMuted} />
+      <AppText variant="caption" tone={ok ? 'success' : 'muted'}>{text}</AppText>
+    </View>
   );
 }
 
-export const Card = ({ children }: { children: React.ReactNode }) => <View style={s.card}>{children}</View>;
+export function Button({ title, onPress, disabled, loading, variant = 'primary', big, icon }: {
+  title: string; onPress: () => void; disabled?: boolean; loading?: boolean; variant?: 'primary' | 'secondary' | 'danger' | 'link'; big?: boolean; icon?: IconName;
+}) {
+  const s = useStyles();
+  return (
+    <UiButton
+      title={title}
+      onPress={onPress}
+      disabled={disabled}
+      loading={loading}
+      icon={icon}
+      variant={variant === 'link' ? 'ghost' : variant}
+      size={big ? 'lg' : variant === 'link' ? 'sm' : 'md'}
+      style={s.button}
+    />
+  );
+}
 
-export const s = StyleSheet.create({
+/** Label + themed switch in a card row (e.g. “Same address as the caregiver”). */
+export function SwitchRow({ label, value, onValueChange }: { label: string; value: boolean; onValueChange: (v: boolean) => void }) {
+  const { colors } = useAppTheme();
+  const s = useStyles();
+  return (
+    <View style={[s.checkRow, s.switchRow]}>
+      <AppText variant="bodyMedium" style={s.flex}>{label}</AppText>
+      <Switch
+        value={value}
+        onValueChange={(v) => { selectionHaptic(); onValueChange(v); }}
+        accessibilityLabel={label}
+        trackColor={{ true: colors.primaryStrong, false: colors.border }}
+        thumbColor={colors.card}
+        ios_backgroundColor={colors.border}
+      />
+    </View>
+  );
+}
+
+/** Answer summary row: question label + chosen answer. */
+export function SummaryRow({ label, value }: { label: string; value: string }) {
+  const s = useStyles();
+  return (
+    <View style={s.summary} accessible accessibilityLabel={`${label}: ${value}`}>
+      <AppText variant="caption" tone="muted">{label}</AppText>
+      <AppText variant="title">{value}</AppText>
+    </View>
+  );
+}
+
+/** Shimmer placeholders while a form draft loads. */
+export function FormSkeleton({ label }: { label: string }) {
+  const s = useStyles();
+  return (
+    <View style={s.skeleton} accessible accessibilityLabel={label} accessibilityState={{ busy: true }}>
+      <Skeleton width="60%" height={32} />
+      {Array.from({ length: 4 }, (_, i) => <Skeleton key={i} height={54} radius={16} />)}
+    </View>
+  );
+}
+
+export const Card = ({ children }: { children: ReactNode }) => {
+  const s = useStyles();
+  return <UiCard style={s.card}>{children}</UiCard>;
+};
+
+const useStyles = makeStyles((t) => ({
   flex: { flex: 1 },
-  page: { flex: 1, backgroundColor: colors.page },
-  content: { padding: 20, paddingBottom: 48 },
-  title: { fontSize: 26, fontWeight: '800', color: colors.title, marginBottom: 6 },
-  subtitle: { fontSize: 15, color: colors.muted, marginBottom: 18, lineHeight: 21 },
-  section: { fontSize: 17, fontWeight: '800', color: colors.title, marginTop: 10, marginBottom: 10 },
-  steps: { marginBottom: 16 },
-  stepText: { color: colors.label, fontWeight: '700', marginBottom: 8 },
-  stepBar: { flexDirection: 'row', gap: 6 },
-  stepDot: { flex: 1, height: 5, borderRadius: 3, backgroundColor: colors.border },
-  stepDotDone: { backgroundColor: colors.primary },
-  field: { marginBottom: 14 },
-  label: { color: colors.label, marginBottom: 6, fontWeight: '700' },
-  hint: { color: colors.muted, fontSize: 13, marginBottom: 6, lineHeight: 18 },
-  inputRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card, borderRadius: 10, borderWidth: 1, borderColor: colors.border },
-  inputError: { borderColor: colors.error },
-  input: { flex: 1, color: colors.title, padding: 13, fontSize: 16 },
-  inlineButton: { paddingHorizontal: 12 },
-  error: { color: colors.error, marginTop: 5, fontSize: 13 },
-  link: { color: colors.primary, fontWeight: '700' },
-  select: { padding: 13, justifyContent: 'space-between' },
-  selectValue: { color: colors.title, fontSize: 16, flex: 1 },
-  selectPlaceholder: { color: colors.placeholder, fontSize: 16, flex: 1 },
-  chevron: { color: colors.muted, fontSize: 16 },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, gap: 12 },
-  modalTitle: { fontSize: 18, fontWeight: '800', color: colors.title, flex: 1 },
-  modalList: { padding: 12, gap: 8 },
-  search: { flex: 0, marginHorizontal: 12, backgroundColor: colors.card, borderRadius: 10, borderWidth: 1, borderColor: colors.border },
-  option: { padding: 14, borderRadius: 10, backgroundColor: colors.card, marginBottom: 8 },
-  optionLetter: { flex: 1, margin: 4, alignItems: 'center' },
-  optionSelected: { backgroundColor: '#cfe9ff' },
-  optionText: { color: colors.title, fontSize: 16, fontWeight: '600' },
-  checkRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 10, borderRadius: 10, backgroundColor: colors.card, marginBottom: 6 },
-  checkText: { color: colors.title, fontSize: 15, flex: 1 },
-  box: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: colors.label, alignItems: 'center', justifyContent: 'center' },
-  boxOn: { backgroundColor: colors.primary, borderColor: colors.primary },
-  boxMark: { color: '#fff', fontWeight: '900' },
-  rule: { color: colors.muted, fontSize: 13, marginBottom: 2 },
-  ruleOk: { color: colors.ok, fontWeight: '700' },
-  button: { padding: 15, borderRadius: 11, alignItems: 'center', marginTop: 8 },
-  big: { paddingVertical: 22, borderRadius: 16 },
-  primary: { backgroundColor: colors.primary },
-  secondary: { backgroundColor: '#e3f0fc' },
-  danger: { backgroundColor: colors.error },
-  linkButton: { backgroundColor: 'transparent' },
-  disabled: { opacity: 0.45 },
-  buttonText: { color: '#fff', fontWeight: '800', fontSize: 16 },
-  buttonTextAlt: { color: colors.primary },
-  card: { backgroundColor: colors.card, borderRadius: 14, padding: 16, marginBottom: 14 },
-});
-
-const VARIANTS = { primary: s.primary, secondary: s.secondary, danger: s.danger, link: s.linkButton } as const;
+  page: { flex: 1, backgroundColor: t.colors.background },
+  glow: { position: 'absolute', top: 0, left: 0, right: 0, height: 320 },
+  content: { paddingHorizontal: t.spacing.screen },
+  centered: { justifyContent: 'center', alignItems: 'center' },
+  title: { marginBottom: t.spacing.xs },
+  subtitle: { marginBottom: t.spacing.lg },
+  section: { marginTop: t.spacing.sm, marginBottom: t.spacing.sm },
+  hint: { marginBottom: t.spacing.sm },
+  steps: { marginBottom: t.spacing.lg, gap: t.spacing.xs },
+  stepHead: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  stepTrack: { height: 8, borderRadius: t.radius.pill, backgroundColor: t.colors.primarySoft, overflow: 'hidden' },
+  stepFill: { height: '100%', borderRadius: t.radius.pill, backgroundColor: t.colors.primaryStrong },
+  message: {
+    flexDirection: 'row', alignItems: 'center', gap: t.spacing.xs, padding: t.spacing.md,
+    borderRadius: t.radius.md, marginBottom: t.spacing.sm,
+  },
+  messageDanger: { backgroundColor: t.colors.dangerSoft },
+  messageSuccess: { backgroundColor: t.colors.successSoft },
+  eye: { width: t.touchTarget, height: t.touchTarget, alignItems: 'center', justifyContent: 'center', marginRight: -t.spacing.xs },
+  field: { marginBottom: t.spacing.md },
+  fieldLabel: { marginBottom: 6, marginLeft: 4 },
+  checkList: { gap: t.spacing.xs },
+  checkRow: {
+    flexDirection: 'row', alignItems: 'center', gap: t.spacing.sm, minHeight: 52, padding: t.spacing.sm,
+    borderRadius: t.radius.md, backgroundColor: t.colors.card, borderWidth: 1.5, borderColor: t.colors.border,
+  },
+  checkRowOn: { borderColor: t.colors.primary, backgroundColor: t.colors.primarySoft },
+  box: {
+    width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: t.colors.textMuted,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  boxOn: { backgroundColor: t.colors.primaryStrong, borderColor: t.colors.primaryStrong },
+  errorRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6, marginLeft: 4 },
+  rule: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
+  button: { marginTop: t.spacing.xs },
+  switchRow: { marginBottom: t.spacing.md },
+  summary: { gap: 2, paddingVertical: t.spacing.sm, borderBottomWidth: 1, borderBottomColor: t.colors.border },
+  skeleton: { alignSelf: 'stretch', gap: t.spacing.md },
+  card: { marginBottom: t.spacing.md },
+}));

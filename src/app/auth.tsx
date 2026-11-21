@@ -1,8 +1,8 @@
 import { useRouter, type Href } from 'expo-router';
 import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
-import { Alert, Text } from 'react-native';
-import { Button, Field, PasswordField, Screen, Subtitle, Title, s as form, useTouched } from '@/components/form';
+import { Alert } from 'react-native';
+import { Button, Field, FormMessage, PasswordField, Screen, Subtitle, Title, useTouched } from '@/components/form';
 import { useLocalization } from '@/localization';
 import { errorKey } from '@/services/auth-errors';
 import { auth } from '@/services/firebase';
@@ -44,11 +44,11 @@ export default function SignInScreen() {
     <Screen>
       <Title>{t('signInTitle')}</Title>
       <Subtitle>{t('careBand')}</Subtitle>
-      <Field label={t('email')} value={email} onChangeText={setEmail} onTouched={() => touch('email')} error={shown('email', emailError)}
+      <Field icon="mail-outline" label={t('email')} value={email} onChangeText={setEmail} onTouched={() => touch('email')} error={shown('email', emailError)}
         placeholder={t('emailPlaceholder')} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} autoComplete="email" textContentType="emailAddress" />
       <PasswordField label={t('password')} value={password} onChangeText={setPassword} onTouched={() => touch('password')} error={shown('password', passwordError)}
         placeholder={t('passwordPlaceholder')} autoComplete="current-password" textContentType="password" onSubmitEditing={() => valid && void submit()} />
-      {error ? <Text style={form.error}>{t(error)}</Text> : null}
+      {error ? <FormMessage>{t(error)}</FormMessage> : null}
       <Button title={t('signIn')} onPress={() => void submit()} disabled={!valid} loading={loading} />
       <Button variant="link" title={t('forgotPassword')} onPress={() => void forgot()} />
       <Button variant="link" title={t('noAccountYet')} onPress={() => router.replace('/register' as Href)} />
