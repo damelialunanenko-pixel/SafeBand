@@ -1,11 +1,15 @@
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
+import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider, useRouter, useSegments, type Href } from 'expo-router';
-import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect, useMemo } from 'react';
+import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { LocalizationProvider, useLocalization } from '@/localization';
 import { requiredRoute } from '@/services/auth-flow';
 import { auth } from '@/services/firebase';
 import { SessionProvider, useSession } from '@/services/session';
+import { AppThemeProvider, fontAssets, useAppTheme } from '@/theme';
+
+void SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
 /**
  * Redirects according to the session: signed out → start screen; email not verified →
@@ -30,29 +34,56 @@ function AuthGuard() {
   return null;
 }
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+/** React Navigation theme built from our tokens, so transitions never flash a foreign background. */
+function NavigationTheme({ children }: { children: React.ReactNode }) {
+  const { isDark, colors } = useAppTheme();
+  const value = useMemo(() => {
+    const base = isDark ? DarkTheme : DefaultTheme;
+    return {
+      ...base,
+      colors: { ...base.colors, primary: colors.primary, background: colors.background, card: colors.card, text: colors.text, border: colors.border },
+    };
+  }, [isDark, colors]);
+  return <ThemeProvider value={value}>{children}</ThemeProvider>;
+}
+
+export default function RootLayout() {
+  const [fontsLoaded, fontError] = useFonts(fontAssets);
+  const ready = fontsLoaded || Boolean(fontError);
+
+  useEffect(() => {
+    if (ready) void SplashScreen.hideAsync().catch(() => undefined);
+  }, [ready]);
+
+  if (!ready) return null;
+
   return (
-    <LocalizationProvider><SessionProvider><ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AuthGuard />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="auth" />
-        <Stack.Screen name="register" />
-        <Stack.Screen name="privacy" />
-        <Stack.Screen name="verify-email" />
-        <Stack.Screen name="security-setup" />
-        <Stack.Screen name="security-check" />
-        <Stack.Screen name="guardian-profile" />
-        <Stack.Screen name="home" />
-        <Stack.Screen name="ward" />
-        <Stack.Screen name="bracelet" />
-        <Stack.Screen name="map" />
-        <Stack.Screen name="history" />
-        <Stack.Screen name="health" />
-        <Stack.Screen name="settings" />
-      </Stack>
-    </ThemeProvider></SessionProvider></LocalizationProvider>
+    <LocalizationProvider>
+      <SessionProvider>
+        <AppThemeProvider>
+          <NavigationTheme>
+            <AnimatedSplashOverlay />
+            <AuthGuard />
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="auth" />
+              <Stack.Screen name="register" />
+              <Stack.Screen name="privacy" />
+              <Stack.Screen name="verify-email" />
+              <Stack.Screen name="security-setup" />
+              <Stack.Screen name="security-check" />
+              <Stack.Screen name="guardian-profile" />
+              <Stack.Screen name="home" />
+              <Stack.Screen name="ward" />
+              <Stack.Screen name="bracelet" />
+              <Stack.Screen name="map" />
+              <Stack.Screen name="history" />
+              <Stack.Screen name="health" />
+              <Stack.Screen name="settings" />
+            </Stack>
+          </NavigationTheme>
+        </AppThemeProvider>
+      </SessionProvider>
+    </LocalizationProvider>
   );
 }
