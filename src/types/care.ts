@@ -70,7 +70,8 @@ export type GuardianProfile = {
 };
 
 export type DeviceData = {
-  location?: Coordinates & { updatedAt?: unknown; address?: string };
+  /** `accuracy` (metres) and `source` are optional: shown on the map only when the device reports them. */
+  location?: Coordinates & { updatedAt?: unknown; address?: string; accuracy?: number; source?: 'gps' | 'cell' | string };
   braceletLocation?: Coordinates & { updatedAt?: unknown };
   connected?: boolean;
   worn?: boolean;

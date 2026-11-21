@@ -172,6 +172,12 @@ export const darkColors: ThemeColors = {
   glass: 'rgba(17, 26, 46, 0.72)',
 };
 
+/** `#RRGGBB` + alpha (0–1) → `rgba()`; for translucent fills such as map circles. */
+export function withAlpha(hex: string, alpha: number) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+}
+
 /** 4-pt spacing scale. `screen` is the horizontal page padding. */
 export const spacing = { xxs: 4, xs: 8, sm: 12, md: 16, lg: 20, xl: 24, xxl: 32, screen: 20 } as const;
 
