@@ -21,7 +21,7 @@ export default function SignInScreen() {
   const passwordError = password ? null : 'errRequired';
   const valid = !emailError && !passwordError;
 
-  // Navigation after success is done by AuthGuard (verify email → security check → home).
+  // Navigation after success is done by AuthGuard (verify email → caregiver profile → home).
   const submit = async () => {
     setLoading(true); setError(null);
     try { await signInWithEmailAndPassword(auth, normalizeEmail(email), password); }

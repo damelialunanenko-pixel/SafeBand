@@ -49,7 +49,7 @@ export type Ward = {
   createdAt?: unknown;
 };
 
-/** users/{uid} — the caregiver. `securityQuestionsSet` is written only by Cloud Functions. */
+/** users/{uid} — the caregiver. */
 export type GuardianProfile = {
   email?: string;
   lastName?: string;
@@ -65,7 +65,6 @@ export type GuardianProfile = {
   address?: Address;
   consentAcceptedAt?: unknown;
   profileComplete?: boolean;
-  securityQuestionsSet?: boolean;
   fcmToken?: string;
 };
 

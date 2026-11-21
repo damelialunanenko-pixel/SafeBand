@@ -14,7 +14,7 @@ import { REGISTRATION_STEPS } from '@/services/registration-steps';
 import { useSession } from '@/services/session';
 import { calculateAge, formatDateInput, isValid, parseDateInput, validateWardForm, type WardForm } from '@/services/validation';
 
-/** Registration step 5 (and "Add person" from home): profile of the person in care. */
+/** Registration step 4 (and "Add person" from home): profile of the person in care. */
 export default function WardScreen() {
   const { t, language } = useLocalization();
   const router = useRouter();
@@ -53,7 +53,7 @@ export default function WardScreen() {
 
   return (
     <Screen>
-      {onboarding ? <StepIndicator step={5} total={REGISTRATION_STEPS} title={t('stepWard')} /> : null}
+      {onboarding ? <StepIndicator step={4} total={REGISTRATION_STEPS} title={t('stepWard')} /> : null}
       <Title>{t('wardTitle')}</Title>
       <Hint>{t('wardAsInId')}</Hint>
       <Field label={t('lastName')} value={f.lastName} onChangeText={(v) => set('lastName', v)} onTouched={() => touch('lastName')}

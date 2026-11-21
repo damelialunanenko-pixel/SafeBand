@@ -1,7 +1,7 @@
 import { requiredRoute, type SessionSnapshot } from '../auth-flow';
 
 const signedIn = (over: Partial<Extract<SessionSnapshot, { status: 'signedIn' }>> = {}): SessionSnapshot => ({
-  status: 'signedIn', emailVerified: true, profile: { securityQuestionsSet: true, profileComplete: true }, trustedDevice: true, ...over,
+  status: 'signedIn', emailVerified: true, profile: { profileComplete: true }, ...over,
 });
 
 describe('requiredRoute', () => {
@@ -21,23 +21,20 @@ describe('requiredRoute', () => {
     expect(requiredRoute(s, 'verify-email')).toBeNull();
     expect(requiredRoute(s, 'privacy')).toBeNull();
   });
-  it('waits for the profile and device flag', () => {
+  it('waits for the profile', () => {
     expect(requiredRoute(signedIn({ profile: 'loading' }), 'home')).toBeNull();
-    expect(requiredRoute(signedIn({ trustedDevice: 'loading' }), 'home')).toBeNull();
   });
-  it('asks to set security questions first', () => {
-    const s = signedIn({ profile: { securityQuestionsSet: false }, trustedDevice: false });
-    expect(requiredRoute(s, 'home')).toBe('/security-setup');
-    expect(requiredRoute(s, 'security-setup')).toBeNull();
+  it('goes straight from email confirmation to the caregiver profile', () => {
+    const s = signedIn({ profile: {} });
+    expect(requiredRoute(s, 'verify-email')).toBe('/guardian-profile');
+    expect(requiredRoute(s, 'home')).toBe('/guardian-profile');
   });
-  it('checks security answers on a new device', () => {
-    const s = signedIn({ trustedDevice: false });
-    expect(requiredRoute(s, 'home')).toBe('/security-check');
-    expect(requiredRoute(s, 'guardian-profile')).toBe('/security-check');
-    expect(requiredRoute(s, 'security-check')).toBeNull();
+  it('no longer knows the security-question screens', () => {
+    expect(requiredRoute(signedIn(), 'security-setup')).toBeNull();
+    expect(requiredRoute(signedIn({ profile: {} }), 'security-check')).toBe('/guardian-profile');
   });
   it('requires the caregiver profile', () => {
-    const s = signedIn({ profile: { securityQuestionsSet: true, profileComplete: false } });
+    const s = signedIn({ profile: { profileComplete: false } });
     expect(requiredRoute(s, 'home')).toBe('/guardian-profile');
     expect(requiredRoute(s, 'guardian-profile')).toBeNull();
   });

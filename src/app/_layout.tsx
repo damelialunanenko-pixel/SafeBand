@@ -16,8 +16,7 @@ void SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
 /**
  * Redirects according to the session: signed out → start screen; email not verified →
- * /verify-email; no security answers → /security-setup; new device → /security-check;
- * no caregiver profile → /guardian-profile. The rules live in services/auth-flow.ts.
+ * /verify-email; no caregiver profile → /guardian-profile. The rules live in services/auth-flow.ts.
  */
 function AuthGuard() {
   const { snapshot } = useSession();
@@ -69,8 +68,6 @@ function RootStack() {
       <Stack.Screen name="register" />
       <Stack.Screen name="privacy" options={{ animation: modal }} />
       <Stack.Screen name="verify-email" />
-      <Stack.Screen name="security-setup" />
-      <Stack.Screen name="security-check" />
       <Stack.Screen name="guardian-profile" />
       <Stack.Screen name="(tabs)" options={{ animation: reduceMotion ? 'none' : 'fade' }} />
       <Stack.Screen name="ward" options={{ animation: modal }} />

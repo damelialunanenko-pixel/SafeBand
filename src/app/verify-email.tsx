@@ -24,7 +24,7 @@ export default function VerifyEmailScreen() {
   }, []);
   const secondsLeft = Math.max(0, Math.ceil((resendAt - now) / 1000));
 
-  // On success AuthGuard continues to the security questions.
+  // On success AuthGuard continues to the caregiver profile.
   const check = async () => {
     setChecking(true); setMessage(null);
     try {

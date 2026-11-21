@@ -7,7 +7,7 @@ import { bindBracelet } from '@/services/care-repository';
 import { REGISTRATION_STEPS } from '@/services/registration-steps';
 import { validateBraceletId } from '@/services/validation';
 
-/** Registration step 6 (optional): link a bracelet to the ward, or "Link later". */
+/** Registration step 5 (optional): link a bracelet to the ward, or "Link later". */
 export default function BraceletScreen() {
   const { t } = useLocalization();
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function BraceletScreen() {
 
   return (
     <Screen>
-      {onboarding ? <StepIndicator step={6} total={REGISTRATION_STEPS} title={t('stepBracelet')} /> : null}
+      {onboarding ? <StepIndicator step={5} total={REGISTRATION_STEPS} title={t('stepBracelet')} /> : null}
       <Title>{t('braceletTitle')}</Title>
       <Subtitle>{t('braceletBody')}</Subtitle>
       <Field icon="watch-outline" label={t('braceletId')} value={braceletId} onChangeText={setBraceletId} onTouched={() => touch('braceletId')}

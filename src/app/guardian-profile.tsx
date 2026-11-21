@@ -13,7 +13,7 @@ import { REGISTRATION_STEPS } from '@/services/registration-steps';
 import { useSession } from '@/services/session';
 import { formatPhoneInput, isValid, validateGuardianForm, type GuardianForm } from '@/services/validation';
 
-/** Registration step 4 (and later editing): caregiver profile in users/{uid}. */
+/** Registration step 3 (and later editing): caregiver profile in users/{uid}. */
 export default function GuardianProfileScreen() {
   const { t } = useLocalization();
   const router = useRouter();
@@ -60,7 +60,7 @@ export default function GuardianProfileScreen() {
 
   return (
     <Screen>
-      {onboarding ? <StepIndicator step={4} total={REGISTRATION_STEPS} title={t('stepGuardian')} /> : null}
+      {onboarding ? <StepIndicator step={3} total={REGISTRATION_STEPS} title={t('stepGuardian')} /> : null}
       <Title>{t('guardianTitle')}</Title>
       <Subtitle>{t('guardianSubtitle')}</Subtitle>
       <Hint>{t('asInId')}</Hint>

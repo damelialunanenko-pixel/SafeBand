@@ -3,7 +3,6 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { SessionSnapshot } from './auth-flow';
 import { auth, db } from './firebase';
-import { isTrustedDevice, setTrustedDevice } from './local-store';
 import type { GuardianProfile } from '@/types/care';
 
 type Session = {
@@ -13,7 +12,6 @@ type Session = {
   snapshot: SessionSnapshot;
   /** Reloads the Firebase user (e.g. after the email link was opened) and refreshes the ID token. */
   refreshUser: () => Promise<void>;
-  markDeviceTrusted: () => Promise<void>;
 };
 
 const SessionContext = createContext<Session | null>(null);
@@ -25,18 +23,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   // Kept in state: user.reload() mutates the same User object, so React would not notice.
   const [emailVerified, setEmailVerified] = useState(false);
   const [profileState, setProfileState] = useState<ProfileState>(null);
-  const [trusted, setTrusted] = useState<{ uid: string; value: boolean } | null>(null);
 
   useEffect(() => onAuthStateChanged(auth, (u) => { setUser(u); setEmailVerified(Boolean(u?.emailVerified)); }), []);
 
   const uid = user?.uid;
-
-  useEffect(() => {
-    if (!uid) return;
-    let cancelled = false;
-    void isTrustedDevice(uid).then((value) => { if (!cancelled) setTrusted({ uid, value }); });
-    return () => { cancelled = true; };
-  }, [uid]);
 
   useEffect(() => {
     const current = auth.currentUser;
@@ -68,15 +58,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     setEmailVerified(current.emailVerified);
   }, []);
 
-  const markDeviceTrusted = useCallback(async () => {
-    const current = auth.currentUser;
-    if (!current) return;
-    await setTrustedDevice(current.uid);
-    setTrusted({ uid: current.uid, value: true });
-  }, []);
-
   const profile = profileState && profileState.uid === uid ? profileState.data : undefined;
-  const trustedValue = trusted && trusted.uid === uid ? trusted.value : undefined;
 
   const snapshot = useMemo<SessionSnapshot>(() => {
     if (user === undefined) return { status: 'loading' };
@@ -85,11 +67,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       status: 'signedIn',
       emailVerified,
       profile: profile === undefined ? 'loading' : (profile ?? {}),
-      trustedDevice: trustedValue === undefined ? 'loading' : trustedValue,
     };
-  }, [user, emailVerified, profile, trustedValue]);
+  }, [user, emailVerified, profile]);
 
-  const value = useMemo(() => ({ user, profile, snapshot, refreshUser, markDeviceTrusted }), [user, profile, snapshot, refreshUser, markDeviceTrusted]);
+  const value = useMemo(() => ({ user, profile, snapshot, refreshUser }), [user, profile, snapshot, refreshUser]);
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }
 
