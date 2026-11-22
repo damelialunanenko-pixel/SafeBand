@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1980" viewBox="0 0 1700 1980">
 <rect width="1700" height="1980" fill="#ffffff"/>
-<text x="40" y="52" font-family="DejaVu Sans, Arial, sans-serif" font-size="34" fill="#0d47a1" font-weight="bold" text-anchor="start">SafeBand v2 — схема подключения</text>
-<text x="40" y="82" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#546e7a" font-weight="normal" text-anchor="start">ESP32-C3 Super Mini · SIM800L · NEO-6M · MPU6050 · MAX30102 · INMP441 · вибро · буззер · кнопка SOS  (пины как на плате)</text>
+<text x="40" y="52" font-family="DejaVu Sans, Arial, sans-serif" font-size="34" fill="#0d47a1" font-weight="bold" text-anchor="start">SafeBand — финальная версия браслета</text>
+<text x="40" y="82" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#546e7a" font-weight="normal" text-anchor="start">ESP32-C3 Super Mini · SIM800L · NEO-6M · MPU6050 · MAX30102 · INMP441 · вибро · буззер · кнопка SOS</text>
 <rect x="1080" y="24" width="590" height="104" rx="10" fill="#f5f7fa" stroke="#cfd8dc"/>
 <text x="1094" y="48" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="bold" text-anchor="start">Цветные метки = одна и та же линия питания (соединить вместе):</text>
 <rect x="1100.75" y="61" width="38.5" height="26" rx="13" fill="#f57c00"/>
@@ -9,10 +9,10 @@
 <text x="1150" y="79" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" fill="#222" font-weight="normal" text-anchor="start">пин 3.3 платы ESP32</text>
 <rect x="1105.5" y="91" width="29.0" height="26" rx="13" fill="#d32f2f"/>
 <text x="1120.0" y="109" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">5V</text>
-<text x="1150" y="109" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" fill="#222" font-weight="normal" text-anchor="start">выход MT3608 = 5.0 В</text>
+<text x="1150" y="109" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" fill="#222" font-weight="normal" text-anchor="start">пин 5V ESP32 (после диода)</text>
 <rect x="1356.0" y="61" width="48.0" height="26" rx="13" fill="#6a1b9a"/>
-<text x="1380.0" y="79" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">VBAT</text>
-<text x="1415" y="79" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" fill="#222" font-weight="normal" text-anchor="start">батарея после выключателя</text>
+<text x="1380.0" y="79" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">+BAT</text>
+<text x="1415" y="79" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" fill="#222" font-weight="normal" text-anchor="start">шина батареи (OUT+ TP4056)</text>
 <rect x="1360.75" y="91" width="38.5" height="26" rx="13" fill="#212121"/>
 <text x="1380.0" y="109" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">GND</text>
 <text x="1415" y="109" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" fill="#222" font-weight="normal" text-anchor="start">общая земля — всё вместе</text>
@@ -48,9 +48,9 @@
 <circle cx="1000" cy="416" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
 <text x="984" y="421" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO21</text>
 <circle cx="1000" cy="478" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
-<text x="984" y="483" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO10</text>
+<text x="984" y="483" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO20</text>
 <circle cx="1000" cy="540" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
-<text x="984" y="545" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO20</text>
+<text x="984" y="545" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO10</text>
 <circle cx="1000" cy="602" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
 <text x="984" y="607" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO8</text>
 <circle cx="1000" cy="664" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
@@ -170,7 +170,7 @@
 <text x="1566" y="305" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="end">GND</text>
 <polyline points="1580,235 1620,235 1620,200" fill="none" stroke="#6a1b9a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
 <rect x="1596.0" y="175" width="48.0" height="26" rx="13" fill="#6a1b9a"/>
-<text x="1620.0" y="193" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">VBAT</text>
+<text x="1620.0" y="193" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">+BAT</text>
 <polyline points="1580,300 1620,300" fill="none" stroke="#212121" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
 <line x1="1604" y1="258" x2="1636" y2="258" stroke="#333" stroke-width="3"/>
 <path d="M 1604 272 Q 1620 262 1636 272" fill="none" stroke="#333" stroke-width="3"/>
@@ -196,9 +196,9 @@
 <text x="1566" y="425" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="end">VCC</text>
 <circle cx="1580" cy="458" r="5" fill="#fff" stroke="#37474f" stroke-width="2.5"/>
 <text x="1566" y="463" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="end">GND</text>
-<polyline points="1580,420 1602,420" fill="none" stroke="#d32f2f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-<rect x="1602" y="407" width="29.0" height="26" rx="13" fill="#d32f2f"/>
-<text x="1616.5" y="425" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">5V</text>
+<polyline points="1580,420 1602,420" fill="none" stroke="#f57c00" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="1602" y="407" width="38.5" height="26" rx="13" fill="#f57c00"/>
+<text x="1621.25" y="425" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">3V3</text>
 <polyline points="1580,458 1602,458" fill="none" stroke="#212121" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
 <rect x="1602" y="445" width="38.5" height="26" rx="13" fill="#212121"/>
 <text x="1621.25" y="463" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">GND</text>
@@ -286,39 +286,24 @@
 <polyline points="660,1105 700,1105" fill="none" stroke="#212121" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
 <rect x="700" y="1092" width="38.5" height="26" rx="13" fill="#212121"/>
 <text x="719.25" y="1110" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">GND</text>
-<polyline points="660,1050 760,1050" fill="none" stroke="#6a1b9a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="765" cy="1050" r="5" fill="#fff" stroke="#37474f" stroke-width="2.5"/>
-<line x1="770" y1="1050" x2="830" y2="1026" stroke="#333" stroke-width="3.5"/>
-<circle cx="840" cy="1050" r="5" fill="#fff" stroke="#37474f" stroke-width="2.5"/>
-<text x="800" y="1016" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#333" font-weight="bold" text-anchor="middle">выключатель</text>
-<polyline points="845,1050 1050,1050" fill="none" stroke="#6a1b9a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="660,1050 1050,1050" fill="none" stroke="#6a1b9a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="800" y="1032" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" font-weight="normal" text-anchor="middle" font-style="italic">(выключатель, если нужен, — сюда)</text>
 <circle cx="930" cy="1050" r="6" fill="#6a1b9a"/>
 <polyline points="930,1050 930,1085" fill="none" stroke="#6a1b9a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
 <rect x="906.0" y="1085" width="48.0" height="26" rx="13" fill="#6a1b9a"/>
-<text x="930.0" y="1103" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">VBAT</text>
-<text x="930" y="1135" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#6a1b9a" font-weight="bold" text-anchor="middle">→ SIM800L VCC</text>
-<rect x="1050" y="970" width="260" height="150" rx="12" fill="#ffebee" stroke="#37474f" stroke-width="2"/>
-<text x="1180.0" y="998" font-family="DejaVu Sans, Arial, sans-serif" font-size="19" fill="#111" font-weight="bold" text-anchor="middle">MT3608</text>
-<text x="1180.0" y="1018" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" fill="#555" font-weight="normal" text-anchor="middle">повышающий</text>
-<text x="1180.0" y="1035" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" fill="#555" font-weight="normal" text-anchor="middle">выставить 5.0 В!</text>
-<circle cx="1050" cy="1050" r="5" fill="#fff" stroke="#37474f" stroke-width="2.5"/>
-<text x="1064" y="1055" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">VIN+</text>
-<circle cx="1050" cy="1105" r="5" fill="#fff" stroke="#37474f" stroke-width="2.5"/>
-<text x="1064" y="1110" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">VIN−</text>
-<circle cx="1310" cy="1050" r="5" fill="#fff" stroke="#37474f" stroke-width="2.5"/>
-<text x="1296" y="1055" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="end">VOUT+</text>
-<circle cx="1310" cy="1105" r="5" fill="#fff" stroke="#37474f" stroke-width="2.5"/>
-<text x="1296" y="1110" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="end">VOUT−</text>
-<polyline points="1050,1105 1020,1105" fill="none" stroke="#212121" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-<rect x="981.5" y="1092" width="38.5" height="26" rx="13" fill="#212121"/>
-<text x="1000.75" y="1110" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">GND</text>
-<polyline points="1310,1105 1340,1105" fill="none" stroke="#212121" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-<rect x="1340" y="1092" width="38.5" height="26" rx="13" fill="#212121"/>
-<text x="1359.25" y="1110" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">GND</text>
-<polyline points="1310,1050 1420,1050" fill="none" stroke="#d32f2f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-<rect x="1430" y="1037" width="29.0" height="26" rx="13" fill="#d32f2f"/>
-<text x="1444.5" y="1055" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">5V</text>
-<text x="1480" y="1055" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#d32f2f" font-weight="bold" text-anchor="start">→ ESP32 5V, GPS VCC</text>
+<text x="930.0" y="1103" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">+BAT</text>
+<text x="930" y="1135" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#6a1b9a" font-weight="bold" text-anchor="middle">→ SIM800L VCC (+1000 мкФ)</text>
+<polygon points="1080,1032 1080,1068 1114,1050" fill="#333"/>
+<line x1="1116" y1="1030" x2="1116" y2="1070" stroke="#333" stroke-width="5"/>
+<polyline points="1050,1050 1080,1050" fill="none" stroke="#6a1b9a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="1098" y="1012" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="bold" text-anchor="middle">диод 1N5819</text>
+<text x="1098" y="1098" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" fill="#333" font-weight="normal" text-anchor="middle">полоска → к ESP32</text>
+<polyline points="1118,1050 1300,1050" fill="none" stroke="#d32f2f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="1310" y="1037" width="29.0" height="26" rx="13" fill="#d32f2f"/>
+<text x="1324.5" y="1055" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="middle">5V</text>
+<text x="1360" y="1055" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#d32f2f" font-weight="bold" text-anchor="start">→ пин 5V ESP32</text>
+<text x="1080" y="1125" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" fill="#555" font-weight="normal" text-anchor="start" font-style="italic">ESP32 питается от батареи через диод;</text>
+<text x="1080" y="1143" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" fill="#555" font-weight="normal" text-anchor="start" font-style="italic">её стабилизатор даёт 3V3 для датчиков и GPS</text>
 <text x="530" y="1142" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#555" font-weight="normal" text-anchor="middle" font-style="italic">USB-C на TP4056 = зарядка браслета</text>
 <text x="40" y="1215" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#0d47a1" font-weight="bold" text-anchor="start">Таблица пайки — провод за проводом</text>
 <rect x="40" y="1235" width="780" height="30" fill="#263238"/>
@@ -396,10 +381,10 @@
 <text x="202" y="1675" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">SD</text>
 <text x="402" y="1675" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#ef6c00" font-weight="bold" text-anchor="start">GPIO4</text>
 <rect x="40" y="1685" width="780" height="30" fill="#fff"/>
-<rect x="40" y="1685" width="6" height="30" fill="#d32f2f"/>
+<rect x="40" y="1685" width="6" height="30" fill="#f57c00"/>
 <text x="54" y="1705" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">GPS NEO-6M</text>
 <text x="202" y="1705" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">VCC / GND</text>
-<text x="402" y="1705" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#d32f2f" font-weight="bold" text-anchor="start">5V / GND</text>
+<text x="402" y="1705" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#f57c00" font-weight="bold" text-anchor="start">3V3 / GND</text>
 <rect x="40" y="1715" width="780" height="30" fill="#f5f7fa"/>
 <rect x="40" y="1715" width="6" height="30" fill="#5d4037"/>
 <text x="54" y="1735" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">GPS NEO-6M</text>
@@ -414,7 +399,7 @@
 <rect x="870" y="1265" width="6" height="30" fill="#6a1b9a"/>
 <text x="884" y="1285" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">SIM800L</text>
 <text x="1032" y="1285" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">VCC</text>
-<text x="1232" y="1285" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#6a1b9a" font-weight="bold" text-anchor="start">VBAT + конденсатор 1000 мкФ</text>
+<text x="1232" y="1285" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#6a1b9a" font-weight="bold" text-anchor="start">+BAT + конденсатор 1000 мкФ</text>
 <rect x="870" y="1295" width="780" height="30" fill="#f5f7fa"/>
 <rect x="870" y="1295" width="6" height="30" fill="#212121"/>
 <text x="884" y="1315" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">SIM800L</text>
@@ -444,17 +429,17 @@
 <rect x="870" y="1445" width="6" height="30" fill="#f57c00"/>
 <text x="884" y="1465" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">Вибро</text>
 <text x="1032" y="1465" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">мотор + , диод</text>
-<text x="1232" y="1465" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#f57c00" font-weight="bold" text-anchor="start">3V3; диод полоской к 3V3</text>
+<text x="1232" y="1465" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#f57c00" font-weight="bold" text-anchor="start">3V3; диод 1N4148 полоской к 3V3</text>
 <rect x="870" y="1475" width="780" height="30" fill="#f5f7fa"/>
 <rect x="870" y="1475" width="6" height="30" fill="#c62828"/>
 <text x="884" y="1495" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">Буззер</text>
 <text x="1032" y="1495" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">+ / −</text>
-<text x="1232" y="1495" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#c62828" font-weight="bold" text-anchor="start">GPIO10 / GND</text>
+<text x="1232" y="1495" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#c62828" font-weight="bold" text-anchor="start">GPIO20 / GND</text>
 <rect x="870" y="1505" width="780" height="30" fill="#fff"/>
 <rect x="870" y="1505" width="6" height="30" fill="#455a64"/>
 <text x="884" y="1525" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">Кнопка SOS</text>
-<text x="1032" y="1525" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">2 вывода</text>
-<text x="1232" y="1525" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">GPIO20 и GND</text>
+<text x="1032" y="1525" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">диагональные ножки</text>
+<text x="1232" y="1525" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">GPIO10 и GND</text>
 <rect x="870" y="1535" width="780" height="30" fill="#f5f7fa"/>
 <rect x="870" y="1535" width="6" height="30" fill="#6a1b9a"/>
 <text x="884" y="1555" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">Li-Po</text>
@@ -463,23 +448,23 @@
 <rect x="870" y="1565" width="780" height="30" fill="#fff"/>
 <rect x="870" y="1565" width="6" height="30" fill="#6a1b9a"/>
 <text x="884" y="1585" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">TP4056</text>
-<text x="1032" y="1585" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">OUT+</text>
-<text x="1232" y="1585" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#6a1b9a" font-weight="bold" text-anchor="start">выключатель → VBAT</text>
+<text x="1032" y="1585" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">OUT+ / OUT−</text>
+<text x="1232" y="1585" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#6a1b9a" font-weight="bold" text-anchor="start">шина +BAT / шина GND</text>
 <rect x="870" y="1595" width="780" height="30" fill="#f5f7fa"/>
-<rect x="870" y="1595" width="6" height="30" fill="#6a1b9a"/>
-<text x="884" y="1615" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">MT3608</text>
-<text x="1032" y="1615" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">VIN+</text>
-<text x="1232" y="1615" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#6a1b9a" font-weight="bold" text-anchor="start">VBAT</text>
+<rect x="870" y="1595" width="6" height="30" fill="#d32f2f"/>
+<text x="884" y="1615" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">Диод 1N5819</text>
+<text x="1032" y="1615" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">анод → катод</text>
+<text x="1232" y="1615" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#d32f2f" font-weight="bold" text-anchor="start">+BAT → 5V ESP32 (полоска к ESP)</text>
 <rect x="870" y="1625" width="780" height="30" fill="#fff"/>
-<rect x="870" y="1625" width="6" height="30" fill="#d32f2f"/>
-<text x="884" y="1645" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">MT3608</text>
-<text x="1032" y="1645" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">VOUT+ (5.0 В)</text>
-<text x="1232" y="1645" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#d32f2f" font-weight="bold" text-anchor="start">ESP32 5V, GPS VCC</text>
+<rect x="870" y="1625" width="6" height="30" fill="#6a1b9a"/>
+<text x="884" y="1645" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">Конденсатор</text>
+<text x="1032" y="1645" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">1000 мкФ 16 В</text>
+<text x="1232" y="1645" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#6a1b9a" font-weight="bold" text-anchor="start">+ к VCC SIM800L, полоска (−) к GND</text>
 <rect x="870" y="1655" width="780" height="30" fill="#f5f7fa"/>
 <rect x="870" y="1655" width="6" height="30" fill="#212121"/>
 <text x="884" y="1675" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">Все GND</text>
 <text x="1032" y="1675" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">—</text>
-<text x="1232" y="1675" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">в одну общую точку</text>
+<text x="1232" y="1675" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">верхняя и нижняя шины — перемычкой</text>
 <rect x="870" y="1685" width="780" height="30" fill="#fff"/>
 <rect x="870" y="1685" width="6" height="30" fill="#455a64"/>
 <text x="884" y="1705" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">ESP32</text>
@@ -489,13 +474,13 @@
 <rect x="870" y="1715" width="6" height="30" fill="#455a64"/>
 <text x="884" y="1735" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">ESP32</text>
 <text x="1032" y="1735" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">USB-C</text>
-<text x="1232" y="1735" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">прошивка при ВЫКЛ. выключателе</text>
+<text x="1232" y="1735" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">прошивка без аккумулятора</text>
 <rect x="870" y="1235" width="780" height="510" fill="none" stroke="#cfd8dc"/>
 <rect x="40" y="1765" width="1620" height="190" rx="10" fill="#fff8e1" stroke="#ffb300" stroke-width="2"/>
 <text x="60" y="1795" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" fill="#e65100" font-weight="bold" text-anchor="start">Перед первым включением</text>
-<text x="60" y="1825" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">1. MT3608: сначала подключите только к батарее, мультиметром подкруткой выставьте 5.0 В — и лишь потом к ESP32 (с завода бывает 10–28 В).</text>
-<text x="60" y="1851" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">2. SIM800L питать ТОЛЬКО от VBAT (3.7–4.2 В) + конденсатор 1000 мкФ у самых пинов. От 5 В и от пина 3.3 платы — нельзя.</text>
-<text x="60" y="1877" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">3. Прошивайте ESP32 по USB при ВЫКЛЮЧЕННОМ выключателе. MAX30102 — окошком к коже, MPU6050 — приклеить жёстко к плате.</text>
-<text x="60" y="1903" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">4. Буззер громкий (ток > 20 мА)? Подключите его через такой же NPN-ключ, как вибромотор.</text>
-<text x="60" y="1929" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">5. Если микрофон молчит (в логе уровень около −120 dBFS): проверьте L/R на GND или поменяйте MIC_SLOT на I2S_STD_SLOT_RIGHT.</text>
+<text x="60" y="1825" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">1. Диод 1N5819 полоской к ESP32. Перевёрнут — плата не запустится от аккумулятора; без диода USB и батарея встретятся.</text>
+<text x="60" y="1851" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">2. SIM800L питать ТОЛЬКО от +BAT (3.7–4.2 В) + конденсатор 1000 мкФ у самых пинов (полоска «−» на GND). От 3.3 В — нельзя.</text>
+<text x="60" y="1877" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">3. Аккумулятор к B+/B− подключать последним, после проверки всех проводов. Прошивать по USB с отключённым аккумулятором.</text>
+<text x="60" y="1903" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">4. MAX30102 — окошком к коже, MPU6050 — жёстко к плате, подальше от вибромотора. Громкий буззер (> 20 мА) — через NPN-ключ.</text>
+<text x="60" y="1929" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">5. Микрофон молчит (около −120 dBFS в логе): проверьте L/R на GND или поменяйте MIC_SLOT на I2S_STD_SLOT_RIGHT.</text>
 </svg>

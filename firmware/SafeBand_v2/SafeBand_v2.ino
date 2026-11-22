@@ -71,8 +71,8 @@ const uint32_t GPS_FRESH_SEC = 180;    // GPS-фикс считается све
 #define PIN_GSM_TX  6    // ESP TX  -> делитель 10k/20k -> SIM800L RXD
 #define PIN_GPS_RX  7    // ESP RX  <- GPS TX
 #define PIN_LED     8    // синий LED на плате (горит при LOW)
-#define PIN_BUZZER  10   // буззер (+)
-#define PIN_BUTTON  20   // кнопка SOS -> GND
+#define PIN_BUTTON  10   // кнопка SOS -> GND
+#define PIN_BUZZER  20   // буззер (+)
 #define PIN_VIBRO   21   // база NPN-ключа вибромотора (через 1 кОм)
 
 #define BUZZER_IS_ACTIVE 0    // 1 = активный буззер (пищит сам от +), 0 = пассивный (нужен ШИМ)
