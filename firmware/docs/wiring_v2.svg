@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1980" viewBox="0 0 1700 1980">
 <rect width="1700" height="1980" fill="#ffffff"/>
 <text x="40" y="52" font-family="DejaVu Sans, Arial, sans-serif" font-size="34" fill="#0d47a1" font-weight="bold" text-anchor="start">SafeBand v2 — схема подключения</text>
-<text x="40" y="82" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#546e7a" font-weight="normal" text-anchor="start">ESP32-C3 Super Mini · SIM800L · NEO-6M · MPU6050 · MAX30102 · INMP441 · вибромотор · буззер · кнопка SOS</text>
+<text x="40" y="82" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#546e7a" font-weight="normal" text-anchor="start">ESP32-C3 Super Mini · SIM800L · NEO-6M · MPU6050 · MAX30102 · INMP441 · вибро · буззер · кнопка SOS  (пины как на плате)</text>
 <rect x="1080" y="24" width="590" height="104" rx="10" fill="#f5f7fa" stroke="#cfd8dc"/>
 <text x="1094" y="48" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="bold" text-anchor="start">Цветные метки = одна и та же линия питания (соединить вместе):</text>
 <rect x="1100.75" y="61" width="38.5" height="26" rx="13" fill="#f57c00"/>
@@ -40,17 +40,17 @@
 <circle cx="700" cy="664" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
 <text x="716" y="669" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="start">5V</text>
 <circle cx="1000" cy="230" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
-<text x="984" y="235" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO21</text>
+<text x="984" y="235" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO6</text>
 <circle cx="1000" cy="292" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
-<text x="984" y="297" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO20</text>
+<text x="984" y="297" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO5</text>
 <circle cx="1000" cy="354" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
-<text x="984" y="359" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO10</text>
+<text x="984" y="359" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO7</text>
 <circle cx="1000" cy="416" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
-<text x="984" y="421" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO7</text>
+<text x="984" y="421" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO21</text>
 <circle cx="1000" cy="478" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
-<text x="984" y="483" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO6</text>
+<text x="984" y="483" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO10</text>
 <circle cx="1000" cy="540" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
-<text x="984" y="545" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO5</text>
+<text x="984" y="545" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO20</text>
 <circle cx="1000" cy="602" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
 <text x="984" y="607" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#fff" font-weight="bold" text-anchor="end">GPIO8</text>
 <circle cx="1000" cy="664" r="5" fill="#fff" stroke="#ffca28" stroke-width="2.5"/>
@@ -404,7 +404,7 @@
 <rect x="40" y="1715" width="6" height="30" fill="#5d4037"/>
 <text x="54" y="1735" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">GPS NEO-6M</text>
 <text x="202" y="1735" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">TX</text>
-<text x="402" y="1735" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#5d4037" font-weight="bold" text-anchor="start">GPIO10   (RX — не подключать)</text>
+<text x="402" y="1735" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#5d4037" font-weight="bold" text-anchor="start">GPIO7   (RX — не подключать)</text>
 <rect x="40" y="1235" width="780" height="510" fill="none" stroke="#cfd8dc"/>
 <rect x="870" y="1235" width="780" height="30" fill="#263238"/>
 <text x="882" y="1256" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold" text-anchor="start">Модуль</text>
@@ -424,16 +424,16 @@
 <rect x="870" y="1325" width="6" height="30" fill="#2e7d32"/>
 <text x="884" y="1345" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">SIM800L</text>
 <text x="1032" y="1345" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">RXD</text>
-<text x="1232" y="1345" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#2e7d32" font-weight="bold" text-anchor="start">GPIO21 через 10 кОм; 20 кОм на GND</text>
+<text x="1232" y="1345" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#2e7d32" font-weight="bold" text-anchor="start">GPIO6 через 10 кОм; 20 кОм на GND</text>
 <rect x="870" y="1355" width="780" height="30" fill="#f5f7fa"/>
 <rect x="870" y="1355" width="6" height="30" fill="#6d4c41"/>
 <text x="884" y="1375" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">SIM800L</text>
 <text x="1032" y="1375" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">TXD</text>
-<text x="1232" y="1375" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#6d4c41" font-weight="bold" text-anchor="start">GPIO20 напрямую</text>
+<text x="1232" y="1375" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#6d4c41" font-weight="bold" text-anchor="start">GPIO5 напрямую</text>
 <rect x="870" y="1385" width="780" height="30" fill="#fff"/>
 <rect x="870" y="1385" width="6" height="30" fill="#0277bd"/>
 <text x="884" y="1405" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">Вибро</text>
-<text x="1032" y="1405" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">GPIO7</text>
+<text x="1032" y="1405" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">GPIO21</text>
 <text x="1232" y="1405" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#0277bd" font-weight="bold" text-anchor="start">1 кОм → база NPN</text>
 <rect x="870" y="1415" width="780" height="30" fill="#f5f7fa"/>
 <rect x="870" y="1415" width="6" height="30" fill="#0277bd"/>
@@ -449,12 +449,12 @@
 <rect x="870" y="1475" width="6" height="30" fill="#c62828"/>
 <text x="884" y="1495" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">Буззер</text>
 <text x="1032" y="1495" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">+ / −</text>
-<text x="1232" y="1495" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#c62828" font-weight="bold" text-anchor="start">GPIO6 / GND</text>
+<text x="1232" y="1495" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#c62828" font-weight="bold" text-anchor="start">GPIO10 / GND</text>
 <rect x="870" y="1505" width="780" height="30" fill="#fff"/>
 <rect x="870" y="1505" width="6" height="30" fill="#455a64"/>
 <text x="884" y="1525" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">Кнопка SOS</text>
 <text x="1032" y="1525" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#333" font-weight="normal" text-anchor="start">2 вывода</text>
-<text x="1232" y="1525" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">GPIO5 и GND</text>
+<text x="1232" y="1525" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">GPIO20 и GND</text>
 <rect x="870" y="1535" width="780" height="30" fill="#f5f7fa"/>
 <rect x="870" y="1535" width="6" height="30" fill="#6a1b9a"/>
 <text x="884" y="1555" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#222" font-weight="bold" text-anchor="start">Li-Po</text>

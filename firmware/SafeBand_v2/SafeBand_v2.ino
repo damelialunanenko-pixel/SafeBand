@@ -67,13 +67,13 @@ const uint32_t GPS_FRESH_SEC = 180;    // GPS-фикс считается све
 #define PIN_MIC_SCK 2    // INMP441 SCK
 #define PIN_MIC_WS  3    // INMP441 WS
 #define PIN_MIC_SD  4    // INMP441 SD
-#define PIN_BUTTON  5    // кнопка SOS -> GND
-#define PIN_BUZZER  6    // буззер (+)
-#define PIN_VIBRO   7    // база NPN-ключа вибромотора (через 1 кОм)
+#define PIN_GSM_RX  5    // ESP RX  <- SIM800L TXD
+#define PIN_GSM_TX  6    // ESP TX  -> делитель 10k/20k -> SIM800L RXD
+#define PIN_GPS_RX  7    // ESP RX  <- GPS TX
 #define PIN_LED     8    // синий LED на плате (горит при LOW)
-#define PIN_GPS_RX  10   // ESP RX  <- GPS TX
-#define PIN_GSM_RX  20   // ESP RX  <- SIM800L TXD
-#define PIN_GSM_TX  21   // ESP TX  -> делитель 10k/20k -> SIM800L RXD
+#define PIN_BUZZER  10   // буззер (+)
+#define PIN_BUTTON  20   // кнопка SOS -> GND
+#define PIN_VIBRO   21   // база NPN-ключа вибромотора (через 1 кОм)
 
 #define BUZZER_IS_ACTIVE 0    // 1 = активный буззер (пищит сам от +), 0 = пассивный (нужен ШИМ)
 const uint16_t BUZZER_FREQ = 2700;

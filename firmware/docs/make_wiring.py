@@ -63,7 +63,7 @@ def resistor_v(x, y, h, label):
 add(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">')
 add(f'<rect width="{W}" height="{H}" fill="#ffffff"/>')
 text(40, 52, "SafeBand v2 — схема подключения", 34, "#0d47a1", "bold")
-text(40, 82, "ESP32-C3 Super Mini · SIM800L · NEO-6M · MPU6050 · MAX30102 · INMP441 · вибромотор · буззер · кнопка SOS",
+text(40, 82, "ESP32-C3 Super Mini · SIM800L · NEO-6M · MPU6050 · MAX30102 · INMP441 · вибро · буззер · кнопка SOS  (пины как на плате)",
      16, "#546e7a")
 
 # легенда питания
@@ -87,7 +87,7 @@ text(EX + EW / 2, EY + EH + 15, "USB-C", 14, "#263238", "bold", "middle")
 
 rows = [230, 292, 354, 416, 478, 540, 602, 664]
 left_pins = ["GPIO0", "GPIO1", "GPIO2", "GPIO3", "GPIO4", "3.3", "G", "5V"]
-right_pins = ["GPIO21", "GPIO20", "GPIO10", "GPIO7", "GPIO6", "GPIO5", "GPIO8", "GPIO9"]
+right_pins = ["GPIO6", "GPIO5", "GPIO7", "GPIO21", "GPIO10", "GPIO20", "GPIO8", "GPIO9"]
 for y, n in zip(rows, left_pins):
     pin(EX, y, "#ffca28"); text(EX + 16, y + 5, n, 16, "#fff", "bold")
 for y, n in zip(rows, right_pins):
@@ -294,18 +294,18 @@ rows_l = [
     ("INMP441", "WS", "GPIO3", "ws"),
     ("INMP441", "SD", "GPIO4", "sd"),
     ("GPS NEO-6M", "VCC / GND", "5V / GND", "5v"),
-    ("GPS NEO-6M", "TX", "GPIO10   (RX — не подключать)", "gps"),
+    ("GPS NEO-6M", "TX", "GPIO7   (RX — не подключать)", "gps"),
 ]
 rows_r = [
     ("SIM800L", "VCC", "VBAT + конденсатор 1000 мкФ", "vbat"),
     ("SIM800L", "GND", "GND (короткий толстый провод)", "gnd"),
-    ("SIM800L", "RXD", "GPIO21 через 10 кОм; 20 кОм на GND", "tx"),
-    ("SIM800L", "TXD", "GPIO20 напрямую", "rx"),
-    ("Вибро", "GPIO7", "1 кОм → база NPN", "vib"),
+    ("SIM800L", "RXD", "GPIO6 через 10 кОм; 20 кОм на GND", "tx"),
+    ("SIM800L", "TXD", "GPIO5 напрямую", "rx"),
+    ("Вибро", "GPIO21", "1 кОм → база NPN", "vib"),
     ("Вибро", "NPN эмиттер / коллектор", "GND / мотор −", "vib"),
     ("Вибро", "мотор + , диод", "3V3; диод полоской к 3V3", "3v3"),
-    ("Буззер", "+ / −", "GPIO6 / GND", "buz"),
-    ("Кнопка SOS", "2 вывода", "GPIO5 и GND", "btn"),
+    ("Буззер", "+ / −", "GPIO10 / GND", "buz"),
+    ("Кнопка SOS", "2 вывода", "GPIO20 и GND", "btn"),
     ("Li-Po", "+ / −", "TP4056 B+ / B−", "vbat"),
     ("TP4056", "OUT+", "выключатель → VBAT", "vbat"),
     ("MT3608", "VIN+", "VBAT", "vbat"),

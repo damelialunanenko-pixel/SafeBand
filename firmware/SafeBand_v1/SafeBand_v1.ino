@@ -57,9 +57,9 @@ const uint32_t GPS_FRESH_SEC = 180;    // GPS-фикс считается све
 // ---- Пины (как на схеме) ----
 #define PIN_SDA     0    // MPU6050 SDA
 #define PIN_SCL     1    // MPU6050 SCL
-#define PIN_GPS_RX  10   // ESP RX  <- GPS TX
-#define PIN_GSM_RX  20   // ESP RX  <- SIM800L TXD
-#define PIN_GSM_TX  21   // ESP TX  -> делитель 10k/20k -> SIM800L RXD
+#define PIN_GPS_RX  7    // ESP RX  <- GPS TX
+#define PIN_GSM_RX  5    // ESP RX  <- SIM800L TXD
+#define PIN_GSM_TX  6    // ESP TX  -> делитель 10k/20k -> SIM800L RXD
 #define PIN_LED     8    // синий LED на плате (горит при LOW)
 
 // ---- Детектор падения (подбирается на испытаниях) ----
