@@ -6,6 +6,7 @@ import { useEffect, useMemo } from 'react';
 import { useReducedMotion } from 'react-native-reanimated';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { ToastProvider } from '@/components/ui';
+import { useAppUpdates } from '@/hooks/use-app-updates';
 import { LocalizationProvider, useLocalization } from '@/localization';
 import { requiredRoute } from '@/services/auth-flow';
 import { auth } from '@/services/firebase';
@@ -34,6 +35,12 @@ function AuthGuard() {
     if (target) router.replace(target as Href);
   }, [snapshot, segment, router]);
 
+  return null;
+}
+
+/** Offers to restart when a newer EAS update has been downloaded (release builds only). */
+function UpdatePrompt() {
+  useAppUpdates();
   return null;
 }
 
@@ -96,6 +103,7 @@ export default function RootLayout() {
             <ToastProvider>
               <AnimatedSplashOverlay />
               <AuthGuard />
+              <UpdatePrompt />
               <RootStack />
             </ToastProvider>
           </NavigationTheme>

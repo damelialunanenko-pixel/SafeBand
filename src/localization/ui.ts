@@ -18,6 +18,7 @@ const en: Dictionary = {
   average: 'Average', minimum: 'Min', maximum: 'Max', period: 'Period', chartMetric: 'Chart metric',
   noReadingsChart: 'Not enough readings to draw a chart yet.',
   stepProgress: 'Registration progress',
+  updateReady: 'An update is available — restart?', updateRestart: 'Restart',
 };
 
 const ru: Dictionary = {
@@ -33,6 +34,7 @@ const ru: Dictionary = {
   average: 'Среднее', minimum: 'Мин.', maximum: 'Макс.', period: 'Период', chartMetric: 'Показатель на графике',
   noReadingsChart: 'Пока мало измерений, чтобы построить график.',
   stepProgress: 'Прогресс регистрации',
+  updateReady: 'Доступно обновление — перезапустить?', updateRestart: 'Перезапустить',
 };
 
 const kk: Dictionary = {
@@ -48,6 +50,7 @@ const kk: Dictionary = {
   average: 'Орташа', minimum: 'Ең аз', maximum: 'Ең көп', period: 'Кезең', chartMetric: 'Графиктегі көрсеткіш',
   noReadingsChart: 'График салу үшін өлшемдер әзірге аз.',
   stepProgress: 'Тіркелу барысы',
+  updateReady: 'Жаңарту қолжетімді — қайта іске қосу керек пе?', updateRestart: 'Қайта іске қосу',
 };
 
 export const uiDictionaries = { en, ru, kk };
