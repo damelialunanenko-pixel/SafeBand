@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.3.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~58.0.4",
     "typescript": "~6.0.3"
@@ -58,7 +59,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "test": "jest"
+    "test": "jest",
+    "update:preview": "eas update --branch preview --environment preview --platform android --message \"preview\"",
+    "update:preview:lowmem": "cross-env NODE_OPTIONS=--max-old-space-size=2048 eas update --branch preview --environment preview --platform android --message \"preview\"",
+    "build:apk": "eas build --platform android --profile preview"
   },
   "private": true,
   "jest": {
