@@ -8,12 +8,13 @@ const ICONS: Record<string, TabIcon> = {
   home: { active: 'home', inactive: 'home-outline' },
   map: { active: 'map', inactive: 'map-outline' },
   health: { active: 'heart', inactive: 'heart-outline' },
+  medications: { active: 'medkit', inactive: 'medkit-outline' },
   settings: { active: 'settings', inactive: 'settings-outline' },
 };
 
 export const unstable_settings = { initialRouteName: 'home' };
 
-/** Main app: Home, Map, Health, Settings under a floating glass tab bar. */
+/** Main app: Home, Map, Health, Medications, Settings under a floating glass tab bar. */
 export default function TabsLayout() {
   const { t } = useLocalization();
   const { colors } = useAppTheme();
@@ -31,6 +32,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="home" options={{ title: t('tabHome') }} />
       <Tabs.Screen name="map" options={{ title: t('tabMap') }} />
       <Tabs.Screen name="health" options={{ title: t('tabHealth') }} />
+      <Tabs.Screen name="medications" options={{ title: t('tabMeds') }} />
       <Tabs.Screen name="settings" options={{ title: t('tabSettings') }} />
     </Tabs>
   );

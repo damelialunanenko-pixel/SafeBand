@@ -6,18 +6,20 @@ import { MetricRing } from '@/components/care/metric-ring';
 import { QuickAction } from '@/components/care/quick-action';
 import { SosButton } from '@/components/care/sos-button';
 import {
-  Appear, AppText, Avatar, Card, Chip, EmptyState, GradientCard, GradientHeader, Icon, IconButton, IconCircle,
+  Appear, AppText, Avatar, Card, ListItem, Chip, EmptyState, GradientCard, GradientHeader, Icon, IconButton, IconCircle,
   ScreenScroll, SectionHeader, Skeleton, SkeletonList, warningHaptic,
 } from '@/components/ui';
 import { DEFAULT_HEALTH_THRESHOLDS } from '@/config/care';
 import { useCareAlerts } from '@/hooks/use-care-alerts';
 import { usePrimaryCareData } from '@/hooks/use-care-data';
+import { useMedications } from '@/hooks/use-medications';
 import { useLiveRefresh } from '@/hooks/use-refresh';
 import { useWardEvents } from '@/hooks/use-ward-events';
 import { useLocalization } from '@/localization';
 import { assessLocation, healthStatus } from '@/services/care-logic';
 import { useBraceletSmsBridge } from '@/services/bracelet-sms';
 import { setSos } from '@/services/care-repository';
+import { nextDose } from '@/services/medication-schedule';
 import { useSession } from '@/services/session';
 import { makeStyles, useAppTheme } from '@/theme';
 
@@ -33,6 +35,7 @@ export default function Dashboard() {
   useCareAlerts(ward, device);
   // Android dev/EAS builds only: bracelet location SMS → devices/{braceletId}. No-op in Expo Go / iOS.
   useBraceletSmsBridge(ward);
+  const { meds, logsByKey } = useMedications(ward?.id);
 
   const guardianName = profile?.firstName?.trim();
 
@@ -58,6 +61,7 @@ export default function Dashboard() {
   const unread = events.some((e) => e.requiresAttention && e.severity !== 'info');
   const healthLabel = health.label === 'No data' ? t('noData') : health.label === 'Normal' ? t('normal') : health.label;
   const lowBattery = typeof device?.battery === 'number' && device.battery <= 20;
+  const nextMed = nextDose(meds, logsByKey, new Date());
 
   const confirmSos = () => {
     warningHaptic();
@@ -146,9 +150,23 @@ export default function Dashboard() {
           <QuickAction icon="map" label={t('quickMap')} tone="primary" onPress={() => router.push('/map')} />
           <QuickAction icon="heart" label={t('quickHealth')} tone="success" onPress={() => router.push('/health')} />
           <QuickAction icon="time" label={t('quickHistory')} tone="lavender" onPress={() => router.push('/history')} />
+          <QuickAction icon="medkit" label={t('quickMeds')} tone="warning" onPress={() => router.push('/medications' as Href)} />
           <QuickAction icon="call" label={t('quickCall')} tone="cyan" onPress={call} disabled={!ward.braceletPhone} />
         </ScrollView>
       </Appear>
+
+      {meds.length ? (
+        <Appear index={3}>
+          <ListItem
+            icon="medkit"
+            iconTone="lavender"
+            title={nextMed ? t('medsNextDose', { time: nextMed.time, name: [nextMed.medication.name, nextMed.medication.dose].filter(Boolean).join(' ') }) : t('medsNoNext')}
+            subtitle={t('medsTitle')}
+            chevron
+            onPress={() => router.push('/medications' as Href)}
+          />
+        </Appear>
+      ) : null}
 
       <Appear index={4}>
         <Card tone={device?.worn === false ? 'danger' : 'default'} style={s.bracelet}>

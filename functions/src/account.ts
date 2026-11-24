@@ -6,8 +6,8 @@ const MAX_AUTH_AGE_SECONDS = 5 * 60;
 const WARD_COLLECTIONS = ["events", "healthReadings", "activeAlerts"] as const;
 
 /**
- * Deletes the caller's data: users/{uid}, their wards (with the wards' events, health readings and
- * active alerts), the wardId link on bracelets, and securityAnswers/{uid}.
+ * Deletes the caller's data: users/{uid}, their wards (with medications and medication logs, and the
+ * wards' events, health readings and active alerts), the wardId link on bracelets, and securityAnswers/{uid}.
  * The Firebase Auth account itself is deleted by the client afterwards (deleteUser).
  */
 export const deleteAccountData = onCall(async (request) => {
@@ -28,8 +28,10 @@ export const deleteAccountData = onCall(async (request) => {
     // Bracelets stay (they are hardware); only the link to the deleted ward is removed.
     const devices = await db.collection("devices").where("wardId", "==", ward.id).get();
     devices.forEach((d) => void writer.update(d.ref, { wardId: admin.firestore.FieldValue.delete() }));
-    void writer.delete(ward.ref);
   }
+
+  // Wards with their subcollections (medications, medicationLogs).
+  for (const ward of wards.docs) await db.recursiveDelete(ward.ref, writer);
 
   void writer.delete(db.collection("securityAnswers").doc(uid));
   void writer.delete(db.collection("users").doc(uid));

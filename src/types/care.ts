@@ -94,3 +94,46 @@ export type DeviceData = {
 
 export type HealthThresholds = { minHeartRate: number; maxHeartRate: number; minSpo2: number };
 export type CareEvent = { id: string; wardId: string; category: 'location'|'health'|'bracelet'|'sos'|'alert'; type: string; description: string; severity: 'info'|'warning'|'critical'; createdAt?: unknown; requiresAttention?: boolean };
+
+// ---- medications: wards/{wardId}/medications/{id}, wards/{wardId}/medicationLogs/{id} ----
+
+export type MedicationForm = 'tablet' | 'capsule' | 'drops' | 'syrup' | 'injection' | 'ointment' | 'inhaler' | 'other';
+export type MealRelation = 'before' | 'with' | 'after' | 'any';
+
+export type Medication = {
+  id: string;
+  /** e.g. "Мемантин", 2–60 characters */
+  name: string;
+  /** e.g. "10 мг", "1 таблетка" */
+  dose?: string;
+  form: MedicationForm;
+  /** Local times "HH:mm", sorted, unique. */
+  times: string[];
+  /** JS weekdays: 0 = Sunday … 6 = Saturday. All seven = every day. */
+  days: number[];
+  /** ISO dates "YYYY-MM-DD"; `endDate` = "course until …". */
+  startDate?: string | null;
+  endDate?: string | null;
+  mealRelation: MealRelation;
+  note?: string;
+  /** Pills left; a "buy more" reminder appears at ≤ 5. */
+  stock?: number | null;
+  /** Off = kept, but no doses and no reminders. */
+  enabled: boolean;
+  createdAt?: unknown;
+  updatedAt?: unknown;
+};
+
+export type MedicationLogStatus = 'taken' | 'skipped' | 'missed';
+
+/** Document ID = doseKey(medicationId, scheduledAt), so a dose has at most one log. */
+export type MedicationLog = {
+  id: string;
+  medicationId: string;
+  /** Firestore Timestamp of the planned dose time. */
+  scheduledAt: unknown;
+  status: MedicationLogStatus;
+  /** When it was marked. */
+  at: unknown;
+  byUid: string;
+};

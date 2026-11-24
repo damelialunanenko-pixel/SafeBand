@@ -43,6 +43,23 @@ service cloud.firestore {
       allow update: if verified()
         && resource.data.guardianId == request.auth.uid
         && request.resource.data.guardianId == request.auth.uid;
+
+      // Medication schedule shared by all of the caregiver's devices.
+      match /medications/{medicationId} {
+        allow read, delete: if verified() && ownsWard(wardId);
+        allow create, update: if verified() && ownsWard(wardId)
+          && request.resource.data.name is string
+          && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 60
+          && request.resource.data.times is list && request.resource.data.times.size() >= 1;
+      }
+
+      // One document per dose: taken / skipped / missed, marked by the caller.
+      match /medicationLogs/{logId} {
+        allow read, delete: if verified() && ownsWard(wardId);
+        allow create, update: if verified() && ownsWard(wardId)
+          && request.resource.data.byUid == request.auth.uid
+          && request.resource.data.status in ['taken', 'skipped', 'missed'];
+      }
     }
 
     // ---- bracelets --------------------------------------------------------------------------

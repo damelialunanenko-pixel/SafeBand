@@ -73,6 +73,7 @@ function RootStack() {
       <Stack.Screen name="ward" options={{ animation: modal }} />
       <Stack.Screen name="bracelet" />
       <Stack.Screen name="history" />
+      <Stack.Screen name="medication-form" options={{ animation: modal }} />
     </Stack>
   );
 }
