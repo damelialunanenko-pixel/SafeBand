@@ -1,6 +1,7 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, type Href } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, Switch, View } from 'react-native';
+import { Alert, Platform, Switch, View } from 'react-native';
 import {
   Appear, AppText, Button, Card, Chip, EmptyState, GradientHeader, IconButton, IconCircle, ScreenScroll, SectionHeader,
   SkeletonList, TopBar, useToast, type IconTone,
@@ -11,12 +12,14 @@ import { useLocalization } from '@/localization';
 import {
   ALL_DAYS, LOW_STOCK, WEEKDAYS, WEEK_ORDER, doseState, dosesOnDay, isLowStock, nextDose, weekStats, type Dose, type DoseState,
 } from '@/services/medication-schedule';
-import { deleteMedication, markDose, setMedicationEnabled } from '@/services/medications';
+import { markDoseWithReminders, openSystemSettings, requestPermission, useReminderState } from '@/services/medication-reminders';
+import { deleteMedication, setMedicationEnabled } from '@/services/medications';
 import { useSession } from '@/services/session';
 import { isoToDateInput } from '@/services/validation';
 import { makeStyles, useAppTheme } from '@/theme';
 import type { Medication } from '@/types/care';
 
+const ASKED_KEY = 'safeband.medReminders.permissionExplained';
 const MEAL_KEYS = { before: 'mealBefore', with: 'mealWith', after: 'mealAfter', any: 'mealAny' } as const;
 const STATE_UI: Record<DoseState, { key: string; tone: IconTone; icon: 'checkmark-circle' | 'play-skip-forward' | 'alert-circle' | 'alarm' | 'time-outline' }> = {
   taken: { key: 'medsStateTaken', tone: 'success', icon: 'checkmark-circle' },
@@ -37,6 +40,7 @@ export default function MedicationsScreen() {
   const { user } = useSession();
   const { ward, loading: wardLoading } = usePrimaryCareData();
   const { meds, logsByKey, loading, error } = useMedications(ward?.id);
+  const { enabled: remindersOn, permission, canAskAgain } = useReminderState();
   const [now, setNow] = useState(() => new Date());
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -44,6 +48,21 @@ export default function MedicationsScreen() {
     const id = setInterval(() => setNow(new Date()), 30_000);
     return () => clearInterval(id);
   }, []);
+
+  // First visit: explain why, then ask for notifications.
+  useEffect(() => {
+    if (Platform.OS === 'web' || permission !== 'undetermined' || !canAskAgain) return;
+    let cancelled = false;
+    void AsyncStorage.getItem(ASKED_KEY).then((asked) => {
+      if (cancelled || asked) return;
+      void AsyncStorage.setItem(ASKED_KEY, '1');
+      Alert.alert(t('medsPermTitle'), t('medsPermBody'), [
+        { text: t('medsPermLater'), style: 'cancel' },
+        { text: t('medsPermAllow'), onPress: () => void requestPermission() },
+      ]);
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [permission, canAskAgain, t]);
 
   const today = useMemo(() => dosesOnDay(meds, now), [meds, now]);
   const next = useMemo(() => nextDose(meds, logsByKey, now), [meds, logsByKey, now]);
@@ -53,7 +72,7 @@ export default function MedicationsScreen() {
     if (!ward || !user) return;
     setBusy(dose.key);
     try {
-      const result = await markDose(ward.id, dose.medication.id, dose.scheduledAt, status, user.uid);
+      const result = await markDoseWithReminders(ward.id, dose.medication.id, dose.scheduledAt, status, user.uid, t);
       if (result.stockDecreased && result.stock !== null && result.stock <= LOW_STOCK) toast.show(t('notifLowStockBody', { name: result.name, n: result.stock }), 'danger');
     } catch {
       toast.show(t('medsMarkError'), 'danger');
@@ -90,6 +109,21 @@ export default function MedicationsScreen() {
 
   return (
     <ScreenScroll tabbed header={header}>
+      {permission === 'denied' ? (
+        <Appear>
+          <Card tone="warning" style={s.gap}>
+            <AppText variant="bodyMedium">{t('medsPermDenied')}</AppText>
+            <Button variant="secondary" size="sm" icon="settings-outline" title={t('medsOpenSettings')} onPress={openSystemSettings} />
+          </Card>
+        </Appear>
+      ) : remindersOn === false ? (
+        <Appear>
+          <Card tone="warning" onPress={() => router.push('/settings')}>
+            <AppText variant="bodyMedium">{t('medsRemindersOffBanner')}</AppText>
+          </Card>
+        </Appear>
+      ) : null}
+
       {error ? <Card tone="danger"><AppText tone="danger">{t('medsError')}</AppText></Card> : null}
 
       {!meds.length ? (

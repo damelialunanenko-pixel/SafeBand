@@ -1,6 +1,8 @@
 import { Tabs } from 'expo-router/js-tabs';
 import { useReducedMotion } from 'react-native-reanimated';
 import { FloatingTabBar, type TabIcon } from '@/components/navigation/floating-tab-bar';
+import { usePrimaryCareData } from '@/hooks/use-care-data';
+import { useMedicationReminders } from '@/hooks/use-medication-reminders';
 import { useLocalization } from '@/localization';
 import { useAppTheme } from '@/theme';
 
@@ -19,6 +21,9 @@ export default function TabsLayout() {
   const { t } = useLocalization();
   const { colors } = useAppTheme();
   const reduceMotion = useReducedMotion();
+  // Medication reminders: rescheduled on start and on every change; notification buttons handled here.
+  const { ward } = usePrimaryCareData();
+  useMedicationReminders(ward);
   return (
     <Tabs
       backBehavior="history"

@@ -1,6 +1,7 @@
 import { useRouter, type Href } from 'expo-router';
 import { Alert, View } from 'react-native';
 import { DeleteAccountCard } from '@/components/delete-account';
+import { MedicationRemindersCard } from '@/components/medication-reminders-card';
 import { SmsSettingsCard } from '@/components/sms-settings-card';
 import {
   Appear, AppText, Button, Card, GradientHeader, Icon, IconCircle, ListItem, PressableScale, ScreenScroll, selectionHaptic,
@@ -76,6 +77,10 @@ export default function SettingsScreen() {
           chevron
           onPress={() => router.push('/guardian-profile' as Href)}
         />
+      </Appear>
+
+      <Appear index={2}>
+        <MedicationRemindersCard />
       </Appear>
 
       <Appear index={2}>
